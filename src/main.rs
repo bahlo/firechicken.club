@@ -71,7 +71,7 @@ async fn index() -> Markup {
                             }
                         }
                         section.fire_chicken {
-                            (PreEscaped(include_str!("../static/fire-chicken.svg")))
+                            img src="/fire-chicken.svg" alt="A chicken with sunglasses and a tail of fire";
                         }
                     }
                     footer {
