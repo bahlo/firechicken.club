@@ -1,0 +1,33 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+body {
+  line-height: 1.5;
+}
+
+p, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+}
+
+body {
+  font-family: sans-serif;
+}
+
+.sitewrapper {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+main {
+  display: flex;
+
+  > * {
+    flex: 1;
+  }
+}
