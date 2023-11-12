@@ -1,30 +1,34 @@
-app = "firechicken-club"
+# fly.toml app configuration file generated for firechicken-club on 2023-11-12T17:12:58+01:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
 
+app = "firechicken-club"
+primary_region = "ams"
 kill_signal = "SIGINT"
-kill_timeout = 5
+kill_timeout = "5s"
+
+[build]
 
 [env]
-PORT = "8080"
+  PORT = "8080"
 
 [[services]]
-internal_port = 8080
-protocol = "tcp"
+  protocol = "tcp"
+  internal_port = 8080
 
-[services.concurrency]
-hard_limit = 25
-soft_limit = 20
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
 
-[[services.ports]]
-handlers = ["http"]
-port = "80"
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
+  [services.concurrency]
+    hard_limit = 25
+    soft_limit = 20
 
-[[services.ports]]
-handlers = ["tls", "http"]
-port = "443"
-
-[[services.tcp_checks]]
-grace_period = "1s"
-interval = "15s"
-port = "8080"
-restart_limit = 6
-timeout = "2s"
+  [[services.tcp_checks]]
+    interval = "15s"
+    timeout = "2s"
+    grace_period = "1s"
