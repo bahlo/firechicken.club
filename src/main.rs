@@ -1,8 +1,28 @@
 use axum::{routing::get, Router};
+use chrono::NaiveDate;
+use lazy_static::lazy_static;
 use maud::{html, Markup, PreEscaped, DOCTYPE};
-use std::net::SocketAddr;
+use serde::Deserialize;
+use std::{collections::HashMap, net::SocketAddr};
 use tower_http::services::ServeDir;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
+use url::Url;
+
+#[derive(Debug, Deserialize)]
+struct FireChicken {
+    members: HashMap<String, Member>,
+}
+
+#[derive(Debug, Deserialize)]
+struct Member {
+    url: Url,
+    name: String,
+}
+
+lazy_static! {
+    static ref FIRE_CHICKEN: FireChicken =
+        toml::from_str(include_str!("../firechicken.toml")).expect("Invalid TOML");
+}
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
@@ -70,10 +90,12 @@ async fn index() -> Markup {
                         p.description { "An invite-only webring for personal websites." }
                         h2 { "Members" }
                         ul.stack-small.members__list {
-                            li.members__member {
-                                strong { "Arne Bahlo" }
-                                br;
-                                a href="https://arne.me" { "arne.me" }
+                            @for (slug, member) in FIRE_CHICKEN.members.iter() {
+                                li.members__member {
+                                    strong { (member.name) }
+                                    br;
+                                    a href=(member.url) { (member.url.host().unwrap()) }
+                                }
                             }
                         }
                     }

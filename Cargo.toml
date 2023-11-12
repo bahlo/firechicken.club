@@ -7,8 +7,13 @@ edition = "2021"
 
 [dependencies]
 axum = "0.6"
+chrono = { version = "0.4.31", default-features = false, features = ["std", "serde"] }
+lazy_static = "1"
 maud = { version = "0.25.0", features = ["axum"] }
+serde = { version = "1", features = ["derive"], default-features = false }
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+toml = "0.8"
 tower-http = { version = "0.4", features = ["fs"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+url = { version = "2.4.1", features = ["serde"] }
