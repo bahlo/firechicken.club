@@ -1,4 +1,4 @@
-/* Uses typescale 1.250 */ 
+/* Uses typescale 1.333 */ 
 
 *, *::before, *::after {
   box-sizing: border-box;
@@ -44,11 +44,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
-  font-size: 1.563rem;
+  font-size: 2.369rem;
 }
 
 h2 {
-  font-size: 1.25rem;
+  font-size: 1.333rem;
 }
 
 h3, h4, h5, h6 {
@@ -77,7 +77,7 @@ h3, h4, h5, h6 {
 
 footer {
   text-align: center;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: #555;
 }
 
