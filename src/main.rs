@@ -1,4 +1,5 @@
 use axum::{
+    extract::Path,
     response::{IntoResponse, Redirect, Response},
     routing::get,
     Router,
@@ -65,14 +66,24 @@ async fn axum() -> shuttle_axum::ShuttleAxum {
     Ok(Router::new()
         .route("/", get(index))
         .route("/random", get(random))
-        // .route("/:slug/prev", get(prev))
-        // .route("/:slug/next", get(next))
+        .route("/:slug/prev", get(prev))
+        .route("/:slug/next", get(next))
         .fallback_service(ServeDir::new("static"))
         .into()) // TODO: Handle 404
 }
 
 async fn random() -> impl IntoResponse {
     let member = FIRE_CHICKEN.random().unwrap();
+    Redirect::temporary(member.url.as_str())
+}
+
+async fn next(Path(slug): Path<String>) -> impl IntoResponse {
+    let member = FIRE_CHICKEN.next(&slug).unwrap();
+    Redirect::temporary(member.url.as_str())
+}
+
+async fn prev(Path(slug): Path<String>) -> impl IntoResponse {
+    let member = FIRE_CHICKEN.prev(&slug).unwrap();
     Redirect::temporary(member.url.as_str())
 }
 
