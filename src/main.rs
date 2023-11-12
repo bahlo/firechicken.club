@@ -57,16 +57,11 @@ async fn index() -> Markup {
                     main {
                         section.members.stack-small {
                             h2 { "Members" }
-                            ul.stack-small {
-                                li {
+                            ul.stack-small.members__list {
+                                li.members__member {
                                     strong { "Arne Bahlo" }
                                     br;
                                     a href="https://arne.me" { "arne.me" }
-                                }
-                                li {
-                                    strong { "Jan Früchtl" }
-                                    br;
-                                    a href="https://jan.work" { "jan.work" }
                                 }
                             }
                         }

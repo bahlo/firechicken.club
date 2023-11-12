@@ -32,10 +32,11 @@ a {
 
 main {
   display: flex;
+  gap: 1rem;
+}
 
-  > * {
-    flex: 1;
-  }
+main > * {
+  flex: 1;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -82,4 +83,12 @@ footer {
 
 footer a {
   color: inherit;
+}
+
+.members__list {
+  padding: 0;
+}
+
+.members__member {
+  list-style: none;
 }
