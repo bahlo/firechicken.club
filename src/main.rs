@@ -22,7 +22,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         .unwrap_or_else(|_| "3000".to_string())
         .parse::<u16>()?;
 
-    let addr = SocketAddr::from(([127, 0, 0, 1], port));
+    let addr = SocketAddr::from(([0, 0, 0, 0, 0, 0, 0, 0], port));
     tracing::debug!("Listening on {}", addr);
     axum::Server::bind(&addr)
         .serve(app.into_make_service())
