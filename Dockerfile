@@ -19,5 +19,8 @@ WORKDIR /app
 # Get compiled binaries from builder's cargo install directory
 COPY --from=builder /usr/src/app/firechicken-club /app/firechicken-club
 
+# Add static assets
+ADD ./static /app/static
+
 # Run the app
 CMD ./firechicken-club
