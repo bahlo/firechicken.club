@@ -1,3 +1,5 @@
+/* Uses typescale 1.250 */ 
+
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -30,4 +32,41 @@ main {
   > * {
     flex: 1;
   }
+}
+
+h1 {
+  font-size: 1.563rem;
+}
+
+h2 {
+  font-size: 1.25rem;
+}
+
+h3, h4, h5, h6 {
+  font-size: 1rem;
+}
+
+.stack {
+  & > * {
+    margin-top: 0;
+  }
+
+  & > * + * {
+      margin-top: 1rem;
+  }
+}
+
+.stack-small {
+  & > * {
+    margin-top: 0;
+  }
+
+  & > * + * {
+      margin-top: .5rem;
+  }
+}
+
+footer {
+  text-align: center;
+  font-size: 0.8rem;
 }

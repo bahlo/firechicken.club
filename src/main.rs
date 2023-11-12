@@ -44,21 +44,33 @@ async fn index() -> Markup {
                 style { (PreEscaped(include_str!("../static/style.css"))) }
             }
             body {
-                .sitewrapper {
-                    h1 { "Fire Chicken Webring" }
-                    p { "An invite-only webring for personal websites." }
+                .sitewrapper.stack {
+                    header {
+                        h1 { "Fire Chicken Webring" }
+                        p { "An invite-only webring for personal websites." }
+                    }
                     main {
-                        section.members {
+                        section.members.stack-small {
                             h2 { "Members" }
-                            ul {
+                            ul.stack-small {
                                 li {
-                                    a href="https://arne.me" { "Arne Bahlo" }
+                                    strong { "Arne Bahlo" }
+                                    br;
+                                    a href="https://arne.me" { "arne.me" }
+                                }
+                                li {
+                                    strong { "Jan Früchtl" }
+                                    br;
+                                    a href="https://jan.work" { "jan.work" }
                                 }
                             }
                         }
                         section.fire_chicken {
                             (PreEscaped(FIRE_CHICKEN))
                         }
+                    }
+                    footer {
+                        span { (PreEscaped("&copy;")) " 2023 by Arne Bahlo" }
                     }
                 }
             }
