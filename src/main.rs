@@ -1,5 +1,4 @@
 use axum::{routing::get, Router};
-use chrono::NaiveDate;
 use lazy_static::lazy_static;
 use maud::{html, Markup, PreEscaped, DOCTYPE};
 use serde::Deserialize;
@@ -88,13 +87,21 @@ async fn index() -> Markup {
                     }
                     main.stack {
                         p.description { "An invite-only webring for personal websites." }
-                        h2 { "Members" }
-                        ul.stack-small.members__list {
-                            @for (slug, member) in FIRE_CHICKEN.members.iter() {
-                                li.members__member {
-                                    strong { (member.name) }
-                                    br;
-                                    a href=(member.url) { (member.url.host().unwrap()) }
+                        table.members {
+                            thead {
+                                th { "Slug" }
+                                th { "Name" }
+                                th { "Url" }
+                            }
+                            tbody {
+                                @for (slug, member) in FIRE_CHICKEN.members.iter() {
+                                    tr {
+                                        td { (slug) }
+                                        td { (member.name) }
+                                        td {
+                                            a href=(member.url) { (member.url.host().unwrap()) }
+                                        }
+                                    }
                                 }
                             }
                         }

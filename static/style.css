@@ -115,12 +115,12 @@ footer a {
   color: inherit;
 }
 
-.members__list {
-  padding: 0;
+.members {
+  width: 100%;
 }
 
-.members__member {
-  list-style: none;
+.members th {
+  text-align: left;
 }
 
 @media (prefers-color-scheme: dark) {
