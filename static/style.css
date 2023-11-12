@@ -10,14 +10,17 @@
 
 body {
   line-height: 1.5;
+  font-family: sans-serif;
+  background: color(srgb 0.9999 1 1);
+  -webkit-font-smoothing: antialiased;
 }
 
 p, h1, h2, h3, h4, h5, h6 {
   overflow-wrap: break-word;
 }
 
-body {
-  font-family: sans-serif;
+a {
+  color: color(display-p3 0.8 0.3608 0.0706);
 }
 
 .sitewrapper {
