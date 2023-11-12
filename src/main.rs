@@ -86,7 +86,9 @@ async fn index() -> Markup {
                         }
                     }
                     main.stack {
-                        p.description { "An invite-only webring for personal websites." }
+                        p.description {
+                            "An invite-only webring for personal websites."
+                        }
                         table.members {
                             thead {
                                 th { "Slug" }
@@ -102,6 +104,25 @@ async fn index() -> Markup {
                                             a href=(member.url) { (member.url.host().unwrap()) }
                                         }
                                     }
+                                }
+                            }
+                        }
+                        h2 { "FAQ" }
+                        section.stack-small {
+                            details {
+                                summary { "What is a webring?" }
+
+                                p {
+                                    "A webring is a collection of website, usually grouped by a topic, so people that want to find websites with similar content can find those easily. They were popular in the 90s due to bad search engines. Now they’re "
+                                    em { "niche" }
+                                    "."
+                                }
+                            }
+                            details {
+                                summary { "How do I join?" }
+
+                                p {
+                                    "If a friend of yours is in the webring, ask them to send me an email with your email address and your website."
                                 }
                             }
                         }
