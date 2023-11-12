@@ -76,6 +76,8 @@ async fn index() -> Markup {
                     }
                     footer {
                         span { (PreEscaped("&copy;")) " 2023 by Arne Bahlo" }
+                        (PreEscaped(" &middot; "))
+                        a href="/imprint" { "Imprint" }
                     }
                 }
             }

@@ -13,6 +13,7 @@ body {
   font-family: sans-serif;
   background: color(srgb 0.9999 1 1);
   -webkit-font-smoothing: antialiased;
+  color: #222;
 }
 
 p, h1, h2, h3, h4, h5, h6 {
@@ -35,6 +36,10 @@ main {
   > * {
     flex: 1;
   }
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #111;
 }
 
 h1 {
@@ -72,4 +77,9 @@ h3, h4, h5, h6 {
 footer {
   text-align: center;
   font-size: 0.8rem;
+  color: #555;
+}
+
+footer a {
+  color: inherit;
 }
