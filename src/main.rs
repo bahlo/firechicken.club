@@ -1,20 +1,58 @@
-use axum::{routing::get, Router};
+use axum::{
+    response::{IntoResponse, Redirect, Response},
+    routing::get,
+    Router,
+};
+use chrono::NaiveDate;
 use lazy_static::lazy_static;
 use maud::{html, Markup, PreEscaped, DOCTYPE};
+use rand::seq::SliceRandom;
 use serde::Deserialize;
-use std::collections::HashMap;
 use tower_http::services::ServeDir;
 use url::Url;
 
 #[derive(Debug, Deserialize)]
 struct FireChicken {
-    members: HashMap<String, Member>,
+    members: Vec<Member>,
+}
+
+impl FireChicken {
+    fn random(&self) -> Option<&Member> {
+        let mut rng = rand::thread_rng();
+        self.members.choose(&mut rng)
+    }
+
+    fn prev(&self, slug: &str) -> Option<&Member> {
+        let Some(index) = self.members.iter().position(|member| member.slug == slug) else {
+            return None;
+        };
+
+        if index == 0 {
+            self.members.last()
+        } else {
+            self.members.get(index - 1)
+        }
+    }
+
+    fn next(&self, slug: &str) -> Option<&Member> {
+        let Some(index) = self.members.iter().position(|member| member.slug == slug) else {
+            return None;
+        };
+
+        if index == self.members.len() - 1 {
+            self.members.first()
+        } else {
+            self.members.get(index + 1)
+        }
+    }
 }
 
 #[derive(Debug, Deserialize)]
 struct Member {
+    slug: String,
     url: Url,
     name: String,
+    joined: NaiveDate,
 }
 
 lazy_static! {
@@ -26,11 +64,16 @@ lazy_static! {
 async fn axum() -> shuttle_axum::ShuttleAxum {
     Ok(Router::new()
         .route("/", get(index))
-        // .route("/random", get(random))
+        .route("/random", get(random))
         // .route("/:slug/prev", get(prev))
         // .route("/:slug/next", get(next))
         .fallback_service(ServeDir::new("static"))
         .into()) // TODO: Handle 404
+}
+
+async fn random() -> impl IntoResponse {
+    let member = FIRE_CHICKEN.random().unwrap();
+    Redirect::temporary(member.url.as_str())
 }
 
 async fn index() -> Markup {
@@ -80,9 +123,9 @@ async fn index() -> Markup {
                                 th { "Url" }
                             }
                             tbody {
-                                @for (slug, member) in FIRE_CHICKEN.members.iter() {
+                                @for member in FIRE_CHICKEN.members.iter() {
                                     tr {
-                                        td { (slug) }
+                                        td { (member.slug) }
                                         td { (member.name) }
                                         td {
                                             a href=(member.url) { (member.url.host().unwrap()) }

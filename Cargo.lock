@@ -536,6 +536,7 @@ dependencies = [
  "chrono",
  "lazy_static",
  "maud",
+ "rand",
  "serde",
  "shuttle-axum",
  "shuttle-runtime",

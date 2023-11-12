@@ -10,6 +10,7 @@ axum = "0.6"
 chrono = { version = "0.4.31", default-features = false, features = ["std", "serde"] }
 lazy_static = "1"
 maud = { version = "0.25.0", features = ["axum"] }
+rand = "0.8.5"
 serde = { version = "1", features = ["derive"], default-features = false }
 shuttle-axum = "0.32.0"
 shuttle-runtime = "0.32.0"
