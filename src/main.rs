@@ -1,6 +1,7 @@
 use axum::{routing::get, Router};
 use maud::{html, Markup, PreEscaped, DOCTYPE};
 use std::net::SocketAddr;
+use tower_http::services::ServeDir;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 #[tokio::main]
@@ -13,7 +14,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         .with(tracing_subscriber::fmt::layer())
         .init();
 
-    let app = Router::new().route("/", get(index));
+    let app = Router::new()
+        .route("/", get(index))
+        .fallback_service(ServeDir::new("static")); // TODO: Handle 404
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
     tracing::debug!("Listening on {}", addr);
@@ -39,7 +42,11 @@ async fn index() -> Markup {
                 meta property="og:url" content="firechicken.club";
                 meta property="og:title" content="Fire Chicken Webring";
                 meta property="og:description" content="An invite-only webring for personal websites.";
-                style { (PreEscaped(include_str!("../static/style.css"))) }
+                link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png";
+                link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png";
+                link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png";
+                link rel="manifest" href="/site.webmanifest";
+                link rel="stylesheet" href="/style.css";
             }
             body {
                 .sitewrapper.stack {
