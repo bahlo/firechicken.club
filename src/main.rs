@@ -2,9 +2,8 @@ use axum::{routing::get, Router};
 use lazy_static::lazy_static;
 use maud::{html, Markup, PreEscaped, DOCTYPE};
 use serde::Deserialize;
-use std::{collections::HashMap, net::SocketAddr};
+use std::collections::HashMap;
 use tower_http::services::ServeDir;
-use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 use url::Url;
 
 #[derive(Debug, Deserialize)]
@@ -23,33 +22,15 @@ lazy_static! {
         toml::from_str(include_str!("../firechicken.toml")).expect("Invalid TOML");
 }
 
-#[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-    tracing_subscriber::registry()
-        .with(
-            tracing_subscriber::EnvFilter::try_from_default_env()
-                .unwrap_or_else(|_| "firechicken_club=debug".into()),
-        )
-        .with(tracing_subscriber::fmt::layer())
-        .init();
-
-    let app = Router::new()
+#[shuttle_runtime::main]
+async fn axum() -> shuttle_axum::ShuttleAxum {
+    Ok(Router::new()
         .route("/", get(index))
         // .route("/random", get(random))
         // .route("/:slug/prev", get(prev))
         // .route("/:slug/next", get(next))
-        .fallback_service(ServeDir::new("static")); // TODO: Handle 404
-
-    let port = std::env::var("PORT")
-        .unwrap_or_else(|_| "3000".to_string())
-        .parse::<u16>()?;
-
-    let addr = SocketAddr::from(([0, 0, 0, 0, 0, 0, 0, 0], port));
-    tracing::debug!("Listening on {}", addr);
-    axum::Server::bind(&addr)
-        .serve(app.into_make_service())
-        .await?;
-    Ok(())
+        .fallback_service(ServeDir::new("static"))
+        .into()) // TODO: Handle 404
 }
 
 async fn index() -> Markup {
