@@ -128,7 +128,6 @@ async fn index() -> Markup {
                             "An invite-only webring for personal websites."
                         }
                         div {
-                            span { "This is what it could look like: " }
                             a href=(format!("/{}/prev", FIRE_CHICKEN.members.first().unwrap().slug)) { "←" }
                             " "
                             a href="https://firechicken.club" { "🔥🐓" }
