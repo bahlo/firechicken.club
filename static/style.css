@@ -29,6 +29,7 @@ p, h1, h2, h3, h4, h5, h6 {
 
 a {
   color: color(display-p3 0.8 0.3608 0.0706);
+  text-underline-offset: 4px;
 }
 
 .sitewrapper {

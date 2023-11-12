@@ -127,6 +127,16 @@ async fn index() -> Markup {
                         p.description {
                             "An invite-only webring for personal websites."
                         }
+                        div {
+                            span { "This is what it could look like: " }
+                            a href=(format!("/{}/prev", FIRE_CHICKEN.members.first().unwrap().slug)) { "←" }
+                            " "
+                            a href="https://firechicken.club" { "🔥🐓" }
+                            " "
+                            a href="/random" { "Random" }
+                            " "
+                            a href=(format!("/{}/next", FIRE_CHICKEN.members.last().unwrap().slug)) { "→" }
+                        }
                         table.members {
                             thead {
                                 th { "Slug" }
