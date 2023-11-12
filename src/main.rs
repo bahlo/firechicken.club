@@ -1,4 +1,5 @@
 use axum::{routing::get, Router};
+use maud::{html, Markup};
 use std::net::SocketAddr;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
@@ -22,6 +23,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     Ok(())
 }
 
-async fn index() -> &'static str {
-    "Hello, World!"
+async fn index() -> Markup {
+    html! {
+        h1 { "Fire Chicken Webring" }
+    }
 }
