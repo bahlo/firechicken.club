@@ -154,3 +154,7 @@ footer a {
     padding: .5rem 0;
   }
 }
+
+details summary {
+  cursor: pointer;
+}
