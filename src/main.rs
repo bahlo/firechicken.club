@@ -35,6 +35,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
 
     let app = Router::new()
         .route("/", get(index))
+        // .route("/random", get(random))
+        // .route("/:slug/prev", get(prev))
+        // .route("/:slug/next", get(next))
         .fallback_service(ServeDir::new("static")); // TODO: Handle 404
 
     let port = std::env::var("PORT")
@@ -129,8 +132,6 @@ async fn index() -> Markup {
                     }
                     footer {
                         span { (PreEscaped("&copy;")) " 2023 by Arne Bahlo" }
-                        (PreEscaped(" &middot; "))
-                        a href="/imprint" { "Imprint" }
                     }
                 }
             }
