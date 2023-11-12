@@ -54,23 +54,27 @@ async fn index() -> Markup {
             }
             body {
                 .sitewrapper.stack {
-                    header {
-                        h1 { "Fire Chicken Webring" }
-                        p { "An invite-only webring for personal websites." }
-                    }
-                    main {
-                        section.members.stack-small {
-                            h2 { "Members" }
-                            ul.stack-small.members__list {
-                                li.members__member {
-                                    strong { "Arne Bahlo" }
-                                    br;
-                                    a href="https://arne.me" { "arne.me" }
-                                }
-                            }
+                    header.hero {
+                        h1.hero__heading {
+                            "Fire"
+                            br;
+                            "Chicken"
+                            br;
+                            "Webring"
                         }
-                        section.fire_chicken {
+                        .hero__fire_chicken {
                             img src="/fire-chicken.svg" alt="A chicken with sunglasses and a tail of fire";
+                        }
+                    }
+                    main.stack {
+                        p { "An invite-only webring for personal websites." }
+                        h2 { "Members" }
+                        ul.stack-small.members__list {
+                            li.members__member {
+                                strong { "Arne Bahlo" }
+                                br;
+                                a href="https://arne.me" { "arne.me" }
+                            }
                         }
                     }
                     footer {

@@ -1,5 +1,12 @@
 /* Uses typescale 1.333 */ 
 
+@font-face {
+  font-family: "Obviously Condensed";
+  font-weight: semi-bold;
+  src: url("/fonts/obviously-condensed/Obviously-Condensed_Semibold.woff2") format("woff2"),
+    url("/fonts/obviously-condensed/Obviously-Condensed_Semibold.woff") format("woff");
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -10,7 +17,7 @@
 
 body {
   line-height: 1.5;
-  font-family: sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   background: color(srgb 0.9999 1 1);
   -webkit-font-smoothing: antialiased;
   color: #222;
@@ -28,15 +35,6 @@ a {
   max-width: 640px;
   margin: 0 auto;
   padding: 1rem;
-}
-
-main {
-  display: flex;
-  gap: 1rem;
-}
-
-main > * {
-  flex: 1;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -75,6 +73,34 @@ h3, h4, h5, h6 {
   }
 }
 
+.hero {
+  display: flex;
+  gap: 1rem;
+  padding: 2rem 0;
+  align-items: center;
+}
+
+.hero > * {
+  flex: 1;
+}
+
+.hero__heading {
+  font-family: "Obviously Condensed", sans-serif;
+  font-size: 4.209rem;
+  line-height: 1;
+}
+
+.hero__fire_chicken {
+  height: 12.627rem; /* 4.209 * 3 */
+  display: flex;
+  align-items: center;
+}
+
+.hero__fire_chicken img {
+  max-height: 100%;
+  max-width: 100%;
+}
+
 footer {
   text-align: center;
   font-size: 0.75rem;
@@ -91,4 +117,15 @@ footer a {
 
 .members__member {
   list-style: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #111;
+    color: #ddd;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: #eee;
+  }
 }
