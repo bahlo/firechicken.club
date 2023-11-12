@@ -67,7 +67,7 @@ async fn index() -> Markup {
                         }
                     }
                     main.stack {
-                        p { "An invite-only webring for personal websites." }
+                        p.description { "An invite-only webring for personal websites." }
                         h2 { "Members" }
                         ul.stack-small.members__list {
                             li.members__member {

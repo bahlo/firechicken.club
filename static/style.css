@@ -101,6 +101,10 @@ h3, h4, h5, h6 {
   max-width: 100%;
 }
 
+.description {
+  font-style: italic;
+}
+
 footer {
   text-align: center;
   font-size: 0.75rem;
@@ -127,5 +131,9 @@ footer a {
 
   h1, h2, h3, h4, h5, h6 {
     color: #eee;
+  }
+
+  .hero__fire_chicken img {
+    opacity: .9; /* dim white */
   }
 }
