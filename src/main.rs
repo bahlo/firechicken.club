@@ -3,8 +3,6 @@ use maud::{html, Markup, PreEscaped, DOCTYPE};
 use std::net::SocketAddr;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
-const FIRE_CHICKEN: &str = include_str!("../static/fire-chicken.svg");
-
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     tracing_subscriber::registry()
@@ -66,7 +64,7 @@ async fn index() -> Markup {
                             }
                         }
                         section.fire_chicken {
-                            (PreEscaped(FIRE_CHICKEN))
+                            (PreEscaped(include_str!("../static/fire-chicken.svg")))
                         }
                     }
                     footer {
