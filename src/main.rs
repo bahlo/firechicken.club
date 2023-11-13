@@ -185,7 +185,7 @@ fn index(fire_chicken: &FireChicken) -> Result<Markup> {
                         }
                     }
                     footer {
-                        span { (PreEscaped("&copy;")) " 2023 by Arne Bahlo" }
+                        span { (PreEscaped("&copy;")) " 2023 Arne Bahlo" }
                     }
                 }
             }
