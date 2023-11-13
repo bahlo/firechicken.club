@@ -9,3 +9,9 @@ slug = "ollie"
 name = "ollie"
 url = "https://flbn.sh"
 joined = "2023-11-13"
+
+[[members]]
+slug = "lukas"
+name = "Lukas Malkmus"
+url = "https://lukasmalkmus.com"
+joined = "2023-11-13"
