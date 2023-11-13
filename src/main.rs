@@ -1,9 +1,7 @@
-use anyhow::{anyhow, bail, Result};
-use chrono::NaiveDate;
+use anyhow::{bail, Result};
 use clap::Parser;
 use lazy_static::lazy_static;
 use notify_debouncer_mini::{new_debouncer, notify::RecursiveMode, DebounceEventResult};
-use serde::Deserialize;
 use std::{
     env,
     fs::{self, File},
@@ -13,10 +11,12 @@ use std::{
     time::Duration,
 };
 use tempdir::TempDir;
-use url::Url;
 use zip::ZipArchive;
 
+mod firechicken;
 mod templates;
+
+use firechicken::FireChicken;
 
 lazy_static! {
     pub static ref GIT_SHA: String = {
@@ -27,52 +27,6 @@ lazy_static! {
         String::from_utf8(output.stdout).expect("Failed to parse git output")
     };
     pub static ref GIT_SHA_SHORT: String = GIT_SHA.chars().take(7).collect();
-}
-
-#[derive(Debug, Deserialize)]
-pub struct FireChicken {
-    members: Vec<Member>,
-}
-
-impl FireChicken {
-    pub fn prev(&self, slug: impl AsRef<str>) -> Result<&Member> {
-        let slug = slug.as_ref();
-
-        let Some(index) = self.members.iter().position(|member| member.slug == slug) else {
-            bail!("Member not found");
-        };
-
-        if index == 0 {
-            self.members.last()
-        } else {
-            self.members.get(index - 1)
-        }
-        .ok_or_else(|| anyhow!("No members"))
-    }
-
-    pub fn next(&self, slug: impl AsRef<str>) -> Result<&Member> {
-        let slug = slug.as_ref();
-
-        let Some(index) = self.members.iter().position(|member| member.slug == slug) else {
-            bail!("Member not found");
-        };
-
-        if index == self.members.len() - 1 {
-            self.members.first()
-        } else {
-            self.members.get(index + 1)
-        }
-        .ok_or_else(|| anyhow!("No members"))
-    }
-}
-
-#[derive(Debug, Deserialize)]
-pub struct Member {
-    slug: String,
-    url: Url,
-    name: String,
-    #[allow(dead_code)]
-    joined: NaiveDate,
 }
 
 #[derive(Debug, Parser)]
