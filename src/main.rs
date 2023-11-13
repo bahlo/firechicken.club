@@ -1,6 +1,7 @@
 use anyhow::{anyhow, bail, Result};
 use chrono::NaiveDate;
 use clap::Parser;
+use lazy_static::lazy_static;
 use maud::{html, Markup, PreEscaped, DOCTYPE};
 use notify_debouncer_mini::{new_debouncer, notify::RecursiveMode, DebounceEventResult};
 use serde::Deserialize;
@@ -15,6 +16,17 @@ use std::{
 use tempdir::TempDir;
 use url::Url;
 use zip::ZipArchive;
+
+lazy_static! {
+    pub static ref GIT_SHA: String = {
+        let output = Command::new("git")
+            .args(&["rev-parse", "HEAD"])
+            .output()
+            .expect("Failed to eecute git command");
+        String::from_utf8(output.stdout).expect("Failed to parse git output")
+    };
+    pub static ref GIT_SHA_SHORT: String = GIT_SHA.chars().take(7).collect();
+}
 
 #[derive(Debug, Deserialize)]
 struct FireChicken {
@@ -58,6 +70,7 @@ struct Member {
     slug: String,
     url: Url,
     name: String,
+    #[allow(dead_code)]
     joined: NaiveDate,
 }
 
@@ -251,7 +264,12 @@ fn index(fire_chicken: &FireChicken) -> Result<Markup> {
                         }
                     }
                     footer {
-                        span { (PreEscaped("&copy;")) " 2023 Arne Bahlo" }
+                        span {
+                            "Commit "
+                            a href=(format!("https://github.com/bahlo/firechicken.club/commit/{}", *GIT_SHA)) { (*GIT_SHA_SHORT) };
+                            (PreEscaped(" &middot; "))
+                            (PreEscaped("&copy;")) " 2023 Arne Bahlo"
+                        }
                     }
                 }
             }

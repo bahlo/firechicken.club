@@ -19,3 +19,4 @@ toml = "0.8"
 ureq = "2.8.0"
 url = { version = "2.4.1", features = ["serde"] }
 zip = "0.6.6"
+lazy_static = "1"
