@@ -36,25 +36,13 @@ fn layout(head: Head, contents: Markup) -> Result<Markup> {
             }
             body {
                 .sitewrapper.stack {
-                    header.hero {
-                        h1.hero__heading {
-                            "Fire"
-                            br;
-                            "Chicken"
-                            br;
-                            "Webring"
-                        }
-                        .hero__fire_chicken {
-                            img src="/fire-chicken.svg" alt="A chicken with sunglasses and a tail of fire";
-                        }
-                    }
-                    main.stack {
-                        (contents)
-                    }
+                    (contents)
                     footer {
                         span {
                             "Commit "
                             a href=(format!("https://github.com/bahlo/firechicken.club/commit/{}", *GIT_SHA)) { (*GIT_SHA_SHORT) };
+                            (PreEscaped(" &middot; "))
+                            a href="/colophon" { "Colophon" };
                             (PreEscaped(" &middot; "))
                             (PreEscaped("&copy;")) " 2023 Arne Bahlo"
                         }
@@ -73,52 +61,104 @@ pub fn index(fire_chicken: &FireChicken) -> Result<Markup> {
             url: Url::parse("https://firechicken.club")?,
         },
         html! {
-            p.description {
-                "An invite-only webring for personal websites."
-            }
-            div {
-                a.no-underline href=(format!("/{}/prev", fire_chicken.members.first().ok_or(anyhow!("Failed to get first member"))?.slug)) { "←" }
-                " "
-                a href="https://firechicken.club" { "Fire Chicken Webring" }
-                " "
-                a.no-underline href=(format!("/{}/next", fire_chicken.members.last().ok_or(anyhow!("Failed to get last member"))?.slug)) { "→" }
-            }
-            table.members {
-                thead {
-                    th { "Slug" }
-                    th { "Name" }
-                    th { "Url" }
+            header.hero {
+                h1.hero__heading {
+                    "Fire"
+                    br;
+                    "Chicken"
+                    br;
+                    "Webring"
                 }
-                tbody {
-                    @for member in fire_chicken.members.iter() {
-                        tr {
-                            td { (member.slug) }
-                            td { (member.name) }
-                            td {
-                                a href=(member.url) { (member.url.host().ok_or(anyhow!("Failed to get host from {}", member.url))?) }
+                .hero__fire_chicken {
+                    img src="/fire-chicken.svg" alt="A chicken with sunglasses and a tail of fire";
+                }
+            }
+            main.stack {
+                p.description {
+                    "An invite-only webring for personal websites."
+                }
+                div {
+                    a.no-underline href=(format!("/{}/prev", fire_chicken.members.first().ok_or(anyhow!("Failed to get first member"))?.slug)) { "←" }
+                    " "
+                    a href="https://firechicken.club" { "Fire Chicken Webring" }
+                    " "
+                    a.no-underline href=(format!("/{}/next", fire_chicken.members.last().ok_or(anyhow!("Failed to get last member"))?.slug)) { "→" }
+                }
+                table.members {
+                    thead {
+                        th { "Slug" }
+                        th { "Name" }
+                        th { "Url" }
+                    }
+                    tbody {
+                        @for member in fire_chicken.members.iter() {
+                            tr {
+                                td { (member.slug) }
+                                td { (member.name) }
+                                td {
+                                    a href=(member.url) { (member.url.host().ok_or(anyhow!("Failed to get host from {}", member.url))?) }
+                                }
                             }
                         }
                     }
                 }
+                h2 { "FAQ" }
+                section.stack-small {
+                    details {
+                        summary { "What is a webring?" }
+
+                        p {
+                            "A webring is a collection of website, usually grouped by a topic, so people that want to find websites with similar content can find those easily. They were popular in the 90s due to bad search engines. Now they’re "
+                            em { "niche" }
+                            "."
+                        }
+                    }
+                    details {
+                        summary { "How do I join?" }
+
+                        p {
+                            "If a friend of yours is in the webring, ask them to send me an email with your email address and your website."
+                        }
+                    }
+                }
             }
-            h2 { "FAQ" }
-            section.stack-small {
-                details {
-                    summary { "What is a webring?" }
+        },
+    )
+}
 
-                    p {
-                        "A webring is a collection of website, usually grouped by a topic, so people that want to find websites with similar content can find those easily. They were popular in the 90s due to bad search engines. Now they’re "
-                        em { "niche" }
-                        "."
-                    }
-                }
-                details {
-                    summary { "How do I join?" }
-
-                    p {
-                        "If a friend of yours is in the webring, ask them to send me an email with your email address and your website."
-                    }
-                }
+pub fn colophon() -> Result<Markup> {
+    layout(
+        Head {
+            title: "Colophon",
+            description: "The colophon for the Fire Chicken Webring.",
+            url: Url::parse("https://firechicken.club/colophon")?,
+        },
+        html! {
+            a href="/" { "← Index" }
+            h2 { "Colophon" }
+            p {
+                "This website was first published on November 13th, 2023 near "
+                a href="https://frankfurt.de" { "Frankfurt, Germany" }
+                ". It's developed on a 2021 MacBook Pro using a custom Rust application and hosted on "
+                a href="https://netlify.com" { "Netlify" }
+                ". The code is hosted on "
+                a href="https://github.com/bahlo/firechicken.club" { "GitHub" }
+                "."
+            }
+            p {
+                "Testing was conducted in the latest versions of Edge, Chrome, Firefox, and Safari. Any issue you encounter on this website can be submitted as "
+                a href="https://github.com/bahlo/firechicken.club/issues/new" { "GitHub issues" }
+                "."
+            }
+            p {
+                "The logo was made for this website by "
+                a href="https://www.instagram.com/ekkapranova/" { "Ekaterina Kapranova" }
+                "."
+            }
+            p {
+                "The font in the header is "
+                a.obviously-condensed href="https://ohnotype.co/fonts/obviously" { "Obviously Condensed" }
+                " by the Ohno Type Company."
             }
         },
     )

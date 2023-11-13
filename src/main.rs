@@ -72,6 +72,13 @@ fn build() -> Result<()> {
         templates::index(&fire_chicken)?.into_string(),
     )?;
 
+    // Create /colophon
+    fs::create_dir_all("dist/colophon")?;
+    fs::write(
+        "dist/colophon/index.html",
+        templates::colophon()?.into_string(),
+    )?;
+
     // Create redirects
     fs::write("dist/_redirects", redirects(&fire_chicken)?)?;
 
