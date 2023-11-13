@@ -22,9 +22,11 @@ struct FireChicken {
 }
 
 impl FireChicken {
-    fn prev(&self, slug: &str) -> Option<&Member> {
+    fn prev(&self, slug: impl AsRef<str>) -> Result<&Member> {
+        let slug = slug.as_ref();
+
         let Some(index) = self.members.iter().position(|member| member.slug == slug) else {
-            return None;
+            bail!("Member not found");
         };
 
         if index == 0 {
@@ -32,11 +34,14 @@ impl FireChicken {
         } else {
             self.members.get(index - 1)
         }
+        .ok_or_else(|| anyhow!("No members"))
     }
 
-    fn next(&self, slug: &str) -> Option<&Member> {
+    fn next(&self, slug: impl AsRef<str>) -> Result<&Member> {
+        let slug = slug.as_ref();
+
         let Some(index) = self.members.iter().position(|member| member.slug == slug) else {
-            return None;
+            bail!("Member not found");
         };
 
         if index == self.members.len() - 1 {
@@ -44,6 +49,7 @@ impl FireChicken {
         } else {
             self.members.get(index + 1)
         }
+        .ok_or_else(|| anyhow!("No members"))
     }
 }
 
@@ -96,6 +102,7 @@ fn build() -> Result<()> {
     fs::write("dist/index.html", index(&fire_chicken)?.into_string())?;
 
     // Create redirects
+    fs::write("dist/_redirects", redirects(&fire_chicken)?)?;
 
     Ok(())
 }
@@ -250,6 +257,26 @@ fn index(fire_chicken: &FireChicken) -> Result<Markup> {
             }
         }
     })
+}
+
+fn redirects(fire_chicken: &FireChicken) -> Result<String> {
+    let mut redirects = String::new();
+    for member in fire_chicken.members.iter() {
+        let prev = fire_chicken.prev(&member.slug)?;
+        let next = fire_chicken.next(&member.slug)?;
+
+        redirects.push_str(&format!(
+            "{} {} 302\n",
+            format!("/{}/prev", member.slug),
+            prev.url,
+        ));
+        redirects.push_str(&format!(
+            "{} {} 302\n",
+            format!("/{}/next", member.slug),
+            next.url,
+        ));
+    }
+    Ok(redirects)
 }
 
 fn copy_dir<F, T>(from: F, to: T) -> Result<()>
