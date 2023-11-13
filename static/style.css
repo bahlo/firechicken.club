@@ -31,6 +31,10 @@ a {
   text-underline-offset: 2px;
 }
 
+a.no-underline {
+  text-decoration: none;
+}
+
 .sitewrapper {
   max-width: 640px;
   margin: 0 auto;

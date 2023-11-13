@@ -220,11 +220,11 @@ fn index(fire_chicken: &FireChicken) -> Result<Markup> {
                             "An invite-only webring for personal websites."
                         }
                         div {
-                            a href=(format!("/{}/prev", fire_chicken.members.first().ok_or(anyhow!("Failed to get first member"))?.slug)) { "←" }
+                            a.no-underline href=(format!("/{}/prev", fire_chicken.members.first().ok_or(anyhow!("Failed to get first member"))?.slug)) { "←" }
                             " "
-                            a href="https://firechicken.club" { "🔥🐓" }
+                            a href="https://firechicken.club" { "Fire Chicken Webring" }
                             " "
-                            a href=(format!("/{}/next", fire_chicken.members.last().ok_or(anyhow!("Failed to get last member"))?.slug)) { "→" }
+                            a.no-underline href=(format!("/{}/next", fire_chicken.members.last().ok_or(anyhow!("Failed to get last member"))?.slug)) { "→" }
                         }
                         table.members {
                             thead {
