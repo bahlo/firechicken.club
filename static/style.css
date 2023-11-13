@@ -147,6 +147,10 @@ footer a {
   footer {
     color: #aaa;
   }
+
+  .members th, .members td {
+    border-bottom-color: #333;
+  }
 }
 
 @media (max-width: 640px) {
