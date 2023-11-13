@@ -9,7 +9,10 @@ edition = "2021"
 anyhow = "1.0.75"
 chrono = { version = "0.4.31", default-features = false, features = ["std", "serde"] }
 clap = { version = "4", features = ["derive"] }
+file-serve = "0.3"
 maud = { version = "0.25.0", features = ["axum"] }
+notify = "6.1.1"
+notify-debouncer-mini = "0.4.1"
 serde = { version = "1", features = ["derive"], default-features = false }
 tempdir = "0.3.7"
 toml = "0.8"

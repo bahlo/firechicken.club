@@ -2,12 +2,15 @@ use anyhow::{anyhow, bail, Result};
 use chrono::NaiveDate;
 use clap::Parser;
 use maud::{html, Markup, PreEscaped, DOCTYPE};
+use notify_debouncer_mini::{new_debouncer, notify::RecursiveMode, DebounceEventResult};
 use serde::Deserialize;
 use std::{
     env,
     fs::{self, File},
     io,
     path::Path,
+    process::{Command, Stdio},
+    time::Duration,
 };
 use tempdir::TempDir;
 use url::Url;
@@ -62,6 +65,8 @@ struct Cli {
 enum Commands {
     #[clap(name = "build")]
     Build,
+    #[clap(name = "watch")]
+    Watch,
     #[clap(name = "download-fonts")]
     DownloadFonts,
 }
@@ -71,6 +76,7 @@ fn main() -> Result<()> {
 
     match cli.command {
         Commands::Build => build(),
+        Commands::Watch => watch(),
         Commands::DownloadFonts => download_fonts(),
     }
 }
@@ -86,7 +92,68 @@ fn build() -> Result<()> {
     // Copy static files
     copy_dir("static", "dist/")?;
 
+    // Create /
     fs::write("dist/index.html", index(&fire_chicken)?.into_string())?;
+
+    // Create redirects
+
+    Ok(())
+}
+
+fn watch() -> Result<()> {
+    // Build on start
+    build()?;
+
+    let mut debouncer =
+        new_debouncer(
+            Duration::from_millis(500),
+            |res: DebounceEventResult| match res {
+                Ok(_event) => {
+                    let mut child = match Command::new("cargo")
+                        .arg("run")
+                        .arg("build")
+                        .stdout(Stdio::inherit())
+                        .stderr(Stdio::inherit())
+                        .spawn()
+                    {
+                        Ok(child) => child,
+                        Err(e) => {
+                            eprintln!("Error: {:?}", e);
+                            return;
+                        }
+                    };
+
+                    match child.wait() {
+                        Ok(status) => {
+                            if !status.success() {
+                                eprintln!("Error: Received status {:?}", status);
+                            }
+                        }
+                        Err(e) => eprintln!("Error: {:?}", e),
+                    }
+                }
+                Err(e) => eprintln!("Errro: {:?}", e),
+            },
+        )?;
+
+    debouncer
+        .watcher()
+        .watch(Path::new("./src"), RecursiveMode::Recursive)?;
+    debouncer
+        .watcher()
+        .watch(Path::new("./static"), RecursiveMode::Recursive)?;
+    debouncer
+        .watcher()
+        .watch(Path::new("./Cargo.toml"), RecursiveMode::NonRecursive)?;
+    debouncer
+        .watcher()
+        .watch(Path::new("./Cargo.lock"), RecursiveMode::NonRecursive)?;
+
+    let dist = env::current_dir()?.join("dist");
+    let server = file_serve::Server::new(&dist);
+    println!("Running on http://{}", server.addr());
+    println!("Hit CTRL-C to stop");
+    server.serve()?;
 
     Ok(())
 }
