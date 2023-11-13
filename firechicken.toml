@@ -15,3 +15,9 @@ slug = "lukas"
 name = "Lukas Malkmus"
 url = "https://lukasmalkmus.com"
 joined = "2023-11-13"
+
+[[members]]
+slug = "pwa"
+name = "Philipp Waldhauer"
+url = "https://knuspermagier.de"
+joined = "2023-11-13"
