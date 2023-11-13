@@ -59,6 +59,13 @@ fn build() -> Result<()> {
     let fire_chicken: FireChicken =
         toml::from_str(include_str!("../firechicken.toml")).expect("Invalid TOML");
 
+    // Get hash for style.css
+    let css_hash: String = blake3::hash(include_bytes!("../static/style.css"))
+        .to_string()
+        .chars()
+        .take(16)
+        .collect();
+
     // Recreate dir
     fs::remove_dir_all("dist").ok();
     fs::create_dir_all("dist")?;
@@ -69,14 +76,14 @@ fn build() -> Result<()> {
     // Create /
     fs::write(
         "dist/index.html",
-        templates::index(&fire_chicken)?.into_string(),
+        templates::index(&fire_chicken, &css_hash)?.into_string(),
     )?;
 
     // Create /colophon
     fs::create_dir_all("dist/colophon")?;
     fs::write(
         "dist/colophon/index.html",
-        templates::colophon()?.into_string(),
+        templates::colophon(&css_hash)?.into_string(),
     )?;
 
     // Create redirects

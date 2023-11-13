@@ -20,3 +20,4 @@ ureq = "2.8.0"
 url = { version = "2.4.1", features = ["serde"] }
 zip = "0.6.6"
 lazy_static = "1"
+blake3 = "1.5.0"

@@ -8,7 +8,7 @@ pub struct Head<'a> {
     pub title: &'a str,
     pub description: &'a str,
     pub url: Url,
-    // pub css_hash: &'a str,
+    pub css_hash: &'a str,
 }
 
 fn layout(head: Head, contents: Markup) -> Result<Markup> {
@@ -32,7 +32,7 @@ fn layout(head: Head, contents: Markup) -> Result<Markup> {
                 link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png";
                 link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png";
                 link rel="manifest" href="/site.webmanifest";
-                link rel="stylesheet" href="/style.css";
+                link rel="stylesheet" href=(format!("/style.css?hash={}", head.css_hash));
             }
             body {
                 .sitewrapper.stack {
@@ -54,12 +54,13 @@ fn layout(head: Head, contents: Markup) -> Result<Markup> {
     })
 }
 
-pub fn index(fire_chicken: &FireChicken) -> Result<Markup> {
+pub fn index(fire_chicken: &FireChicken, css_hash: impl AsRef<str>) -> Result<Markup> {
     layout(
         Head {
             title: "Fire Chicken Webring",
             description: "An invite-only webring for personal websites.",
             url: Url::parse("https://firechicken.club")?,
+            css_hash: css_hash.as_ref(),
         },
         html! {
             header.hero {
@@ -137,12 +138,13 @@ pub fn index(fire_chicken: &FireChicken) -> Result<Markup> {
     )
 }
 
-pub fn colophon() -> Result<Markup> {
+pub fn colophon(css_hash: impl AsRef<str>) -> Result<Markup> {
     layout(
         Head {
             title: "Colophon",
             description: "The colophon for the Fire Chicken Webring.",
             url: Url::parse("https://firechicken.club/colophon")?,
+            css_hash: css_hash.as_ref(),
         },
         html! {
             a href="/" { "← Index" }
