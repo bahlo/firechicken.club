@@ -117,8 +117,18 @@ pub fn index(fire_chicken: &FireChicken) -> Result<Markup> {
                     details {
                         summary { "How do I join?" }
 
-                        p {
-                            "If a friend of yours is in the webring, ask them to send me an email with your email address and your website."
+                        .stack-small {
+                            p {
+                                "If a friend of yours is in the webring, ask them to send me an email with your email address and your website. Once you're in, add the following snippet somewhere, replacing "
+                                code { ":slug" }
+                                " with your slug:"
+                            }
+
+                            pre {
+                                r#"<a href="https://firechicken.club/:slug/prev">←</a>
+<a href="https://firechicken.club">Fire Chicken Webring</a>
+<a href="https://firechicken.club/:slug/next">→</a>"#
+                            }
                         }
                     }
                 }
