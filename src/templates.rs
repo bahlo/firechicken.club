@@ -39,12 +39,13 @@ fn layout(head: Head, contents: Markup) -> Result<Markup> {
                     (contents)
                     footer {
                         span {
+                            (PreEscaped("&copy;")) " 2023 "
+                            a href="https://arne.me" { "Arne Bahlo" }
+                            (PreEscaped(" &middot; "))
                             "Commit "
                             a href=(format!("https://github.com/bahlo/firechicken.club/commit/{}", *GIT_SHA)) { (*GIT_SHA_SHORT) };
                             (PreEscaped(" &middot; "))
                             a href="/colophon" { "Colophon" };
-                            (PreEscaped(" &middot; "))
-                            (PreEscaped("&copy;")) " 2023 Arne Bahlo"
                         }
                     }
                 }
