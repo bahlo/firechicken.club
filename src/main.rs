@@ -2,7 +2,6 @@ use anyhow::{anyhow, bail, Result};
 use chrono::NaiveDate;
 use clap::Parser;
 use lazy_static::lazy_static;
-use maud::{html, Markup, PreEscaped, DOCTYPE};
 use notify_debouncer_mini::{new_debouncer, notify::RecursiveMode, DebounceEventResult};
 use serde::Deserialize;
 use std::{
@@ -17,6 +16,8 @@ use tempdir::TempDir;
 use url::Url;
 use zip::ZipArchive;
 
+mod templates;
+
 lazy_static! {
     pub static ref GIT_SHA: String = {
         let output = Command::new("git")
@@ -29,12 +30,12 @@ lazy_static! {
 }
 
 #[derive(Debug, Deserialize)]
-struct FireChicken {
+pub struct FireChicken {
     members: Vec<Member>,
 }
 
 impl FireChicken {
-    fn prev(&self, slug: impl AsRef<str>) -> Result<&Member> {
+    pub fn prev(&self, slug: impl AsRef<str>) -> Result<&Member> {
         let slug = slug.as_ref();
 
         let Some(index) = self.members.iter().position(|member| member.slug == slug) else {
@@ -49,7 +50,7 @@ impl FireChicken {
         .ok_or_else(|| anyhow!("No members"))
     }
 
-    fn next(&self, slug: impl AsRef<str>) -> Result<&Member> {
+    pub fn next(&self, slug: impl AsRef<str>) -> Result<&Member> {
         let slug = slug.as_ref();
 
         let Some(index) = self.members.iter().position(|member| member.slug == slug) else {
@@ -66,7 +67,7 @@ impl FireChicken {
 }
 
 #[derive(Debug, Deserialize)]
-struct Member {
+pub struct Member {
     slug: String,
     url: Url,
     name: String,
@@ -112,7 +113,10 @@ fn build() -> Result<()> {
     copy_dir("static", "dist/")?;
 
     // Create /
-    fs::write("dist/index.html", index(&fire_chicken)?.into_string())?;
+    fs::write(
+        "dist/index.html",
+        templates::index(&fire_chicken)?.into_string(),
+    )?;
 
     // Create redirects
     fs::write("dist/_redirects", redirects(&fire_chicken)?)?;
@@ -176,106 +180,6 @@ fn watch() -> Result<()> {
     server.serve()?;
 
     Ok(())
-}
-
-fn index(fire_chicken: &FireChicken) -> Result<Markup> {
-    Ok(html! {
-        (DOCTYPE)
-        html lang="en" {
-            head {
-                title { "Fire Chicken Webring" }
-                meta charset="utf-8";
-                meta name="title" content="Fire Chicken Webring";
-                meta name="description" content="An invite-only webring for personal websites.";
-                meta name="author" content="Arne Bahlo";
-                meta name="theme-color" content="color(srgb 0.9429 0.3521 0.1599)";
-                meta name="viewport" content="width=device-width,initial-scale=1";
-                meta property="og:type" content="website";
-                meta property="og:url" content="firechicken.club";
-                meta property="og:title" content="Fire Chicken Webring";
-                meta property="og:description" content="An invite-only webring for personal websites.";
-                meta property="og:image" content="https://firechicken.club/og-image.png";
-                link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png";
-                link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png";
-                link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png";
-                link rel="manifest" href="/site.webmanifest";
-                link rel="stylesheet" href="/style.css";
-            }
-            body {
-                .sitewrapper.stack {
-                    header.hero {
-                        h1.hero__heading {
-                            "Fire"
-                            br;
-                            "Chicken"
-                            br;
-                            "Webring"
-                        }
-                        .hero__fire_chicken {
-                            img src="/fire-chicken.svg" alt="A chicken with sunglasses and a tail of fire";
-                        }
-                    }
-                    main.stack {
-                        p.description {
-                            "An invite-only webring for personal websites."
-                        }
-                        div {
-                            a.no-underline href=(format!("/{}/prev", fire_chicken.members.first().ok_or(anyhow!("Failed to get first member"))?.slug)) { "←" }
-                            " "
-                            a href="https://firechicken.club" { "Fire Chicken Webring" }
-                            " "
-                            a.no-underline href=(format!("/{}/next", fire_chicken.members.last().ok_or(anyhow!("Failed to get last member"))?.slug)) { "→" }
-                        }
-                        table.members {
-                            thead {
-                                th { "Slug" }
-                                th { "Name" }
-                                th { "Url" }
-                            }
-                            tbody {
-                                @for member in fire_chicken.members.iter() {
-                                    tr {
-                                        td { (member.slug) }
-                                        td { (member.name) }
-                                        td {
-                                            a href=(member.url) { (member.url.host().ok_or(anyhow!("Failed to get host from {}", member.url))?) }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        h2 { "FAQ" }
-                        section.stack-small {
-                            details {
-                                summary { "What is a webring?" }
-
-                                p {
-                                    "A webring is a collection of website, usually grouped by a topic, so people that want to find websites with similar content can find those easily. They were popular in the 90s due to bad search engines. Now they’re "
-                                    em { "niche" }
-                                    "."
-                                }
-                            }
-                            details {
-                                summary { "How do I join?" }
-
-                                p {
-                                    "If a friend of yours is in the webring, ask them to send me an email with your email address and your website."
-                                }
-                            }
-                        }
-                    }
-                    footer {
-                        span {
-                            "Commit "
-                            a href=(format!("https://github.com/bahlo/firechicken.club/commit/{}", *GIT_SHA)) { (*GIT_SHA_SHORT) };
-                            (PreEscaped(" &middot; "))
-                            (PreEscaped("&copy;")) " 2023 Arne Bahlo"
-                        }
-                    }
-                }
-            }
-        }
-    })
 }
 
 fn redirects(fire_chicken: &FireChicken) -> Result<String> {
