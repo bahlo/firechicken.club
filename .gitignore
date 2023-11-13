@@ -1,3 +1,4 @@
 /target
 /static/fonts/*
 !/static/fonts/.gitkeep
+/dist

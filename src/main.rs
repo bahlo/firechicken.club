@@ -1,15 +1,9 @@
-use axum::{
-    extract::Path,
-    response::{IntoResponse, Redirect, Response},
-    routing::get,
-    Router,
-};
+use anyhow::{anyhow, bail, Result};
 use chrono::NaiveDate;
-use lazy_static::lazy_static;
 use maud::{html, Markup, PreEscaped, DOCTYPE};
 use rand::seq::SliceRandom;
 use serde::Deserialize;
-use tower_http::services::ServeDir;
+use std::{fs, path::Path};
 use url::Url;
 
 #[derive(Debug, Deserialize)]
@@ -56,39 +50,24 @@ struct Member {
     joined: NaiveDate,
 }
 
-lazy_static! {
-    static ref FIRE_CHICKEN: FireChicken =
+fn main() -> Result<()> {
+    let fire_chicken: FireChicken =
         toml::from_str(include_str!("../firechicken.toml")).expect("Invalid TOML");
+
+    // Recreate dir
+    fs::remove_dir_all("dist").ok();
+    fs::create_dir_all("dist")?;
+
+    // Copy static files
+    copy_dir("static", "dist/")?;
+
+    fs::write("dist/index.html", index(&fire_chicken)?.into_string())?;
+
+    Ok(())
 }
 
-#[shuttle_runtime::main]
-async fn axum() -> shuttle_axum::ShuttleAxum {
-    Ok(Router::new()
-        .route("/", get(index))
-        .route("/random", get(random))
-        .route("/:slug/prev", get(prev))
-        .route("/:slug/next", get(next))
-        .fallback_service(ServeDir::new("static"))
-        .into()) // TODO: Handle 404
-}
-
-async fn random() -> impl IntoResponse {
-    let member = FIRE_CHICKEN.random().unwrap();
-    Redirect::temporary(member.url.as_str())
-}
-
-async fn next(Path(slug): Path<String>) -> impl IntoResponse {
-    let member = FIRE_CHICKEN.next(&slug).unwrap();
-    Redirect::temporary(member.url.as_str())
-}
-
-async fn prev(Path(slug): Path<String>) -> impl IntoResponse {
-    let member = FIRE_CHICKEN.prev(&slug).unwrap();
-    Redirect::temporary(member.url.as_str())
-}
-
-async fn index() -> Markup {
-    html! {
+fn index(fire_chicken: &FireChicken) -> Result<Markup> {
+    Ok(html! {
         (DOCTYPE)
         html lang="en" {
             head {
@@ -128,13 +107,13 @@ async fn index() -> Markup {
                             "An invite-only webring for personal websites."
                         }
                         div {
-                            a href=(format!("/{}/prev", FIRE_CHICKEN.members.first().unwrap().slug)) { "←" }
+                            a href=(format!("/{}/prev", fire_chicken.members.first().ok_or(anyhow!("Failed to get first member"))?.slug)) { "←" }
                             " "
                             a href="https://firechicken.club" { "🔥🐓" }
                             " "
                             a href="/random" { "Random" }
                             " "
-                            a href=(format!("/{}/next", FIRE_CHICKEN.members.last().unwrap().slug)) { "→" }
+                            a href=(format!("/{}/next", fire_chicken.members.last().ok_or(anyhow!("Failed to get last member"))?.slug)) { "→" }
                         }
                         table.members {
                             thead {
@@ -143,12 +122,12 @@ async fn index() -> Markup {
                                 th { "Url" }
                             }
                             tbody {
-                                @for member in FIRE_CHICKEN.members.iter() {
+                                @for member in fire_chicken.members.iter() {
                                     tr {
                                         td { (member.slug) }
                                         td { (member.name) }
                                         td {
-                                            a href=(member.url) { (member.url.host().unwrap()) }
+                                            a href=(member.url) { (member.url.host().ok_or(anyhow!("Failed to get host from {}", member.url))?) }
                                         }
                                     }
                                 }
@@ -180,5 +159,37 @@ async fn index() -> Markup {
                 }
             }
         }
+    })
+}
+
+fn copy_dir<F, T>(from: F, to: T) -> Result<()>
+where
+    F: AsRef<Path> + Send + Sync,
+    T: AsRef<Path> + Send,
+{
+    // TODO: Turn this into functional code
+    let mut dir = fs::read_dir(&from)?;
+    while let Some(item) = dir.next().transpose()? {
+        let file_name = item.file_name();
+
+        let file_name_str = file_name.to_string_lossy();
+        if file_name_str.starts_with('.') && file_name_str != ".well-known" {
+            continue;
+        }
+
+        let new_path = to.as_ref().join(file_name);
+        if new_path.exists() {
+            bail!("File or directory already exists: {:?}", new_path)
+        }
+
+        if item.path().is_dir() {
+            fs::create_dir(&new_path)?;
+            copy_dir(item.path(), &new_path)?;
+        } else {
+            let path = item.path();
+            fs::copy(path, new_path)?;
+        }
     }
+
+    Ok(())
 }
