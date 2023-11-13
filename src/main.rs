@@ -2,7 +2,6 @@ use anyhow::{anyhow, bail, Result};
 use chrono::NaiveDate;
 use clap::Parser;
 use maud::{html, Markup, PreEscaped, DOCTYPE};
-use rand::seq::SliceRandom;
 use serde::Deserialize;
 use std::{
     env,
@@ -20,11 +19,6 @@ struct FireChicken {
 }
 
 impl FireChicken {
-    fn random(&self) -> Option<&Member> {
-        let mut rng = rand::thread_rng();
-        self.members.choose(&mut rng)
-    }
-
     fn prev(&self, slug: &str) -> Option<&Member> {
         let Some(index) = self.members.iter().position(|member| member.slug == slug) else {
             return None;
@@ -141,8 +135,6 @@ fn index(fire_chicken: &FireChicken) -> Result<Markup> {
                             a href=(format!("/{}/prev", fire_chicken.members.first().ok_or(anyhow!("Failed to get first member"))?.slug)) { "←" }
                             " "
                             a href="https://firechicken.club" { "🔥🐓" }
-                            " "
-                            a href="/random" { "Random" }
                             " "
                             a href=(format!("/{}/next", fire_chicken.members.last().ok_or(anyhow!("Failed to get last member"))?.slug)) { "→" }
                         }
