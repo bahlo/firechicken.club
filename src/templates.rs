@@ -126,9 +126,11 @@ pub fn index(fire_chicken: &FireChicken, css_hash: impl AsRef<str>) -> Result<Ma
                             }
 
                             pre {
-                                r#"<a href="https://firechicken.club/:slug/prev">←</a>
+                                code {
+                                    r#"<a href="https://firechicken.club/:slug/prev">←</a>
 <a href="https://firechicken.club">Fire Chicken Webring</a>
 <a href="https://firechicken.club/:slug/next">→</a>"#
+                                }
                             }
                         }
                     }
