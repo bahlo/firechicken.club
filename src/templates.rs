@@ -80,10 +80,19 @@ pub fn index(fire_chicken: &FireChicken, css_hash: impl AsRef<str>) -> Result<Ma
                     "An invite-only webring for personal websites."
                 }
                 div {
+                    "This is what it look like: "
                     a.no-underline href=(format!("/{}/prev", fire_chicken.members.first().ok_or(anyhow!("Failed to get first member"))?.slug)) { "←" }
-                    " "
-                    a href="https://firechicken.club" { "Fire Chicken Webring" }
-                    " "
+                    (PreEscaped("&nbsp;"))
+                    a href="https://firechicken.club" { (PreEscaped("Fire&nbsp;Chicken&nbsp;Webring")) }
+                    (PreEscaped("&nbsp;"))
+                    a.no-underline href=(format!("/{}/next", fire_chicken.members.last().ok_or(anyhow!("Failed to get last member"))?.slug)) { "→" }
+
+                    " or "
+
+                    a.no-underline href=(format!("/{}/prev", fire_chicken.members.first().ok_or(anyhow!("Failed to get first member"))?.slug)) { "←" }
+                    (PreEscaped("&nbsp;"))
+                    a.no-underline href="https://firechicken.club" { (PreEscaped("🔥&#8288;🐓")) }
+                    (PreEscaped("&nbsp;"))
                     a.no-underline href=(format!("/{}/next", fire_chicken.members.last().ok_or(anyhow!("Failed to get last member"))?.slug)) { "→" }
                 }
                 table.members {
