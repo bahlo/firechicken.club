@@ -21,3 +21,9 @@ slug = "pwa"
 name = "Philipp Waldhauer"
 url = "https://knuspermagier.de"
 joined = "2023-11-13"
+
+[[members]]
+slug = "kotatsuyaki"
+name = "kotatsuyaki"
+url = "https://blog.kotatsu.dev"
+joined = "2023-11-15"
