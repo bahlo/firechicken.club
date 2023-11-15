@@ -27,3 +27,9 @@ slug = "kotatsuyaki"
 name = "kotatsuyaki"
 url = "https://blog.kotatsu.dev"
 joined = "2023-11-15"
+
+[[members]]
+slug = "cv"
+name = "Christoph Voigt"
+url = "https://christophvoigt.com"
+joined = "2023-11-15"
