@@ -33,3 +33,9 @@ slug = "cv"
 name = "Christoph Voigt"
 url = "https://christophvoigt.com"
 joined = "2023-11-15"
+
+[[members]]
+slug = "igor"
+name = "Igor Bedesqui"
+url = "https://www.igorbedesqui.com"
+joined = "2023-11-20"
