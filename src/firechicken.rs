@@ -9,32 +9,36 @@ pub struct FireChicken {
 }
 
 impl FireChicken {
-    pub fn prev(&self, slug: impl AsRef<str>) -> Result<&Member> {
+    pub fn prev_valid(&self, slug: impl AsRef<str>) -> Result<&Member> {
         let slug = slug.as_ref();
 
-        let Some(index) = self.members.iter().position(|member| member.slug == slug) else {
+        let valid_members: Vec<&Member> = self.members.iter().filter(|m| !m.invalid).collect();
+
+        let Some(index) = valid_members.iter().position(|member| member.slug == slug) else {
             bail!("Member not found");
         };
 
         if index == 0 {
-            self.members.last()
+            valid_members.last().map(|m| *m)
         } else {
-            self.members.get(index - 1)
+            valid_members.get(index - 1).map(|m| *m)
         }
         .ok_or_else(|| anyhow!("No members"))
     }
 
-    pub fn next(&self, slug: impl AsRef<str>) -> Result<&Member> {
+    pub fn next_valid(&self, slug: impl AsRef<str>) -> Result<&Member> {
         let slug = slug.as_ref();
 
-        let Some(index) = self.members.iter().position(|member| member.slug == slug) else {
+        let valid_members: Vec<&Member> = self.members.iter().filter(|m| !m.invalid).collect();
+
+        let Some(index) = valid_members.iter().position(|member| member.slug == slug) else {
             bail!("Member not found");
         };
 
-        if index == self.members.len() - 1 {
-            self.members.first()
+        if index == valid_members.len() - 1 {
+            valid_members.first().map(|m| *m)
         } else {
-            self.members.get(index + 1)
+            valid_members.get(index + 1).map(|m| *m)
         }
         .ok_or_else(|| anyhow!("No members"))
     }
@@ -47,4 +51,6 @@ pub struct Member {
     pub name: String,
     #[allow(dead_code)]
     pub joined: NaiveDate,
+    #[serde(default)]
+    pub invalid: bool,
 }

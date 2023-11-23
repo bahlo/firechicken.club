@@ -152,9 +152,10 @@ fn watch() -> Result<()> {
 
 fn redirects(fire_chicken: &FireChicken) -> Result<String> {
     let mut redirects = String::new();
-    for member in fire_chicken.members.iter() {
-        let prev = fire_chicken.prev(&member.slug)?;
-        let next = fire_chicken.next(&member.slug)?;
+
+    for member in fire_chicken.members.iter().filter(|m| !m.invalid) {
+        let prev = fire_chicken.prev_valid(&member.slug)?;
+        let next = fire_chicken.next_valid(&member.slug)?;
 
         redirects.push_str(&format!(
             "{} {} 302\n",

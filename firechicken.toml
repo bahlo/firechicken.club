@@ -9,6 +9,7 @@ slug = "ollie"
 name = "ollie"
 url = "https://flbn.sh"
 joined = "2023-11-13"
+invalid = true
 
 [[members]]
 slug = "lukas"

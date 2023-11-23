@@ -103,7 +103,7 @@ pub fn index(fire_chicken: &FireChicken, css_hash: impl AsRef<str>) -> Result<Ma
                     }
                     tbody {
                         @for member in fire_chicken.members.iter() {
-                            tr {
+                            tr class=(if member.invalid { "line-through" } else { "" }) {
                                 td { (member.slug) }
                                 td { (member.name) }
                                 td {
@@ -141,6 +141,12 @@ pub fn index(fire_chicken: &FireChicken, css_hash: impl AsRef<str>) -> Result<Ma
 <a href="https://firechicken.club/:slug/next">→</a>"#
                                 }
                             }
+                        }
+                    }
+                    details {
+                        summary { "Why are some members crossed out?" }
+                        p {
+                            "When the snipped is missing or the site is down for a longer period of time, the member is marked as invalid and skipped in the ring. If you're a member and you think you're marked as invalid by mistake, please contact me."
                         }
                     }
                 }
