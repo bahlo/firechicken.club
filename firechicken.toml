@@ -40,3 +40,9 @@ slug = "igor"
 name = "Igor Bedesqui"
 url = "https://igorbedesqui.com"
 joined = "2023-11-20"
+
+[[members]]
+slug = "hexedit"
+name = "HexEdit Reality"
+url = "https://hexeditreality.com/"
+joined = "2023-11-24"
