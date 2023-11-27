@@ -46,3 +46,9 @@ slug = "hexedit"
 name = "HexEdit Reality"
 url = "https://hexeditreality.com/"
 joined = "2023-11-24"
+
+[[members]]
+slug = "stefan"
+name = "Stefan Kühnel"
+url = "https://stefankuehnel.com"
+joined = "2023-11-27"
