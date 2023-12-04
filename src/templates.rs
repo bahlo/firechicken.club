@@ -193,3 +193,21 @@ pub fn colophon(css_hash: impl AsRef<str>) -> Result<Markup> {
         },
     )
 }
+
+pub fn not_found(css_hash: impl AsRef<str>) -> Result<Markup> {
+    layout(
+        Head {
+            title: "Not Found",
+            description: "This page could not be found.",
+            url: Url::parse("https://firechicken.club/404")?,
+            css_hash: css_hash.as_ref(),
+        },
+        html! {
+            a href="/" { "← Index" }
+            h2 { "404 — Not Found" }
+            p {
+                "The page you were looking for was not found."
+            }
+        },
+    )
+}

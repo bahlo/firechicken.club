@@ -86,6 +86,12 @@ fn build() -> Result<()> {
         templates::colophon(&css_hash)?.into_string(),
     )?;
 
+    // Create 404.html
+    fs::write(
+        "dist/404.html",
+        templates::not_found(&css_hash)?.into_string(),
+    )?;
+
     // Create redirects
     fs::write("dist/_redirects", redirects(&fire_chicken)?)?;
 
