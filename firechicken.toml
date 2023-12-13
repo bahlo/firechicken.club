@@ -51,3 +51,9 @@ slug = "stefan"
 name = "Stefan Kühnel"
 url = "https://stefankuehnel.com"
 joined = "2023-11-27"
+
+[[members]]
+slug = "dan"
+name = "Dan Newman"
+url = "https://dan.newman.is"
+joined = "2023-12-13"
