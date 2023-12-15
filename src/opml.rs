@@ -58,12 +58,12 @@ pub fn render(fire_chicken: &FireChicken) -> Result<String> {
                 .iter()
                 .filter(|m| !m.invalid)
                 .map(|member| {
-                    member.rss_feeds.iter().map(|feed_url| Outline {
-                        text: member.name.clone(),
-                        title: member.name.clone(),
+                    member.rss_feeds.iter().map(|feed| Outline {
+                        text: feed.title.clone().unwrap_or(member.name.clone()),
+                        title: feed.title.clone().unwrap_or(member.name.clone()),
                         typ: "rss".to_string(),
-                        xml_url: feed_url.clone(),
-                        html_url: member.url.clone(),
+                        xml_url: feed.xml_url.clone(),
+                        html_url: feed.html_url.clone().unwrap_or(member.url.clone()),
                     })
                 })
                 .flatten()

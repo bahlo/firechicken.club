@@ -54,5 +54,12 @@ pub struct Member {
     #[serde(default)]
     pub invalid: bool,
     #[serde(default)]
-    pub rss_feeds: Vec<Url>,
+    pub rss_feeds: Vec<RssFeed>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct RssFeed {
+    pub title: Option<String>,
+    pub xml_url: Url,
+    pub html_url: Option<Url>,
 }

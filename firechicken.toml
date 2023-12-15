@@ -4,9 +4,9 @@ name = "Arne Bahlo"
 url = "https://arne.me"
 joined = "2023-11-12"
 rss_feeds = [
-  "https://arne.me/articles/atom.xml",
-  "https://arne.me/weekly/atom.xml",
-  "https://arne.me/book-reviews/feed.xml"
+  { title = "Arne Bahlo", xml_url = "https://arne.me/articles/atom.xml", html_url = "https://arne.me/articles"},
+  { title = "Arne’s Weekly", xml_url = "https://arne.me/weekly/atom.xml", html_url = "https://arne.me/weekly"},
+  { title = "Arne Bahlo’s Book Reviews", xml_url ="https://arne.me/book-reviews/feed.xml", html_url = "https://arne.me/book-reviews" }
 ]
 
 [[members]]
@@ -26,7 +26,7 @@ slug = "pwa"
 name = "Philipp Waldhauer"
 url = "https://knuspermagier.de"
 joined = "2023-11-13"
-rss_feeds = ["https://knuspermagier.de/feed"]
+rss_feeds = [{ xml_url = "https://knuspermagier.de/feed" }]
 
 [[members]]
 slug = "kotatsuyaki"
@@ -34,8 +34,8 @@ name = "kotatsuyaki"
 url = "https://blog.kotatsu.dev"
 joined = "2023-11-15"
 rss_feeds = [
-  "https://blog.kotatsu.dev/feed.xml",
-  "https://blog.kotatsu.dev/notes.xml"
+  { xml_url = "https://blog.kotatsu.dev/feed.xml" },
+  { title = "kotatsuyaki’s notes", xml_url = "https://blog.kotatsu.dev/notes.xml", html_url = "https://blog.kotatsu.dev/notes" }
 ]
 
 [[members]]
@@ -43,7 +43,7 @@ slug = "cv"
 name = "Christoph Voigt"
 url = "https://christophvoigt.com"
 joined = "2023-11-15"
-rss_feeds = ["https://christophvoigt.com/rss.xml"]
+rss_feeds = [{ xml_url =  "https://christophvoigt.com/rss.xml" }]
 
 [[members]]
 slug = "igor"
@@ -57,7 +57,7 @@ name = "HexEdit Reality"
 url = "https://hexeditreality.com/"
 joined = "2023-11-24"
 rss_feeds = [
-  "https://hexeditreality.com/index.xml"
+  { xml_url = "https://hexeditreality.com/index.xml" }
 ]
 
 [[members]]
