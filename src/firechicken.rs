@@ -53,4 +53,6 @@ pub struct Member {
     pub joined: NaiveDate,
     #[serde(default)]
     pub invalid: bool,
+    #[serde(default)]
+    pub rss_feeds: Vec<Url>,
 }

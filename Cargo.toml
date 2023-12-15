@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.75"
-chrono = { version = "0.4.31", default-features = false, features = ["std", "serde"] }
+chrono = { version = "0.4.31", default-features = false, features = ["std", "serde", "clock"] }
 clap = { version = "4", features = ["derive"] }
 file-serve = "0.3"
 maud = { version = "0.25.0", features = ["axum"] }
@@ -21,3 +21,4 @@ url = { version = "2.4.1", features = ["serde"] }
 zip = "0.6.6"
 lazy_static = "1"
 blake3 = "1.5.0"
+quick-xml = { version = "0.31.0", features = ["serialize"] }

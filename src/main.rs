@@ -14,6 +14,7 @@ use tempdir::TempDir;
 use zip::ZipArchive;
 
 mod firechicken;
+mod opml;
 mod templates;
 
 use firechicken::FireChicken;
@@ -94,6 +95,9 @@ fn build() -> Result<()> {
 
     // Create redirects
     fs::write("dist/_redirects", redirects(&fire_chicken)?)?;
+
+    // Create OPML
+    fs::write("dist/opml.xml", opml::render(&fire_chicken)?)?;
 
     Ok(())
 }
