@@ -3,6 +3,11 @@ slug = "arne"
 name = "Arne Bahlo"
 url = "https://arne.me"
 joined = "2023-11-12"
+rss_feeds = [
+  "https://arne.me/articles/atom.xml",
+  "https://arne.me/weekly/atom.xml",
+  "https://arne.me/book-reviews/feed.xml"
+]
 
 [[members]]
 slug = "ollie"
@@ -21,18 +26,24 @@ slug = "pwa"
 name = "Philipp Waldhauer"
 url = "https://knuspermagier.de"
 joined = "2023-11-13"
+rss_feeds = ["https://knuspermagier.de/feed"]
 
 [[members]]
 slug = "kotatsuyaki"
 name = "kotatsuyaki"
 url = "https://blog.kotatsu.dev"
 joined = "2023-11-15"
+rss_feeds = [
+  "https://blog.kotatsu.dev/feed.xml",
+  "https://blog.kotatsu.dev/notes.xml"
+]
 
 [[members]]
 slug = "cv"
 name = "Christoph Voigt"
 url = "https://christophvoigt.com"
 joined = "2023-11-15"
+rss_feeds = ["https://christophvoigt.com/rss.xml"]
 
 [[members]]
 slug = "igor"
@@ -45,6 +56,9 @@ slug = "hexedit"
 name = "HexEdit Reality"
 url = "https://hexeditreality.com/"
 joined = "2023-11-24"
+rss_feeds = [
+  "https://hexeditreality.com/index.xml"
+]
 
 [[members]]
 slug = "stefan"
