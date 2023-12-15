@@ -42,6 +42,8 @@ fn layout(head: Head, contents: Markup) -> Result<Markup> {
                             (PreEscaped("&copy;")) " 2023 "
                             a href="https://arne.me" { "Arne Bahlo" }
                             (PreEscaped(" &middot; "))
+                            a rel="me" href="https://spezi.social/@firechicken" { "Mastodon" }
+                            (PreEscaped(" &middot; "))
                             "Commit "
                             a href=(format!("https://github.com/bahlo/firechicken.club/commit/{}", *GIT_SHA)) { (*GIT_SHA_SHORT) };
                             (PreEscaped(" &middot; "))
