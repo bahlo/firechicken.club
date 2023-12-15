@@ -125,6 +125,14 @@ pub fn index(fire_chicken: &FireChicken, css_hash: impl AsRef<str>) -> Result<Ma
                         }
                     }
                     details {
+                        summary { "Can I subscribe to all websites at once?" }
+                        p {
+                            "Yes, there's an "
+                            a href="/opml.xml" { "OPML file" }
+                            " you can import into your RSS reader to subscribe to all sites at once."
+                        }
+                    }
+                    details {
                         summary { "How do I join?" }
 
                         .stack-small {
