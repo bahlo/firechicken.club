@@ -71,3 +71,10 @@ slug = "dan"
 name = "Dan Newman"
 url = "https://dan.newman.is"
 joined = "2023-12-13"
+
+[[members]]
+slug = "foreverliketh.is"
+name = "Jayden Garridan Bridges"
+url = "https://foreverliketh.is"
+joined = "2024-01-03"
+rss_feeds = [{ xml_url = "https://foreverliketh.is/blog/index.xml" }]
