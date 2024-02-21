@@ -78,3 +78,10 @@ name = "Jayden Garridan Bridges"
 url = "https://foreverliketh.is"
 joined = "2024-01-03"
 rss_feeds = [{ xml_url = "https://foreverliketh.is/blog/index.xml" }]
+
+[[members]]
+slug = "efe"
+name = "İsmail Efe"
+url = "https://ismailefe.org"
+joined = "2024-02-21"
+rss_feeds = [{ xml_url = "https://ismailefe.org/feed.xml" }]
