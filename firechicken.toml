@@ -4,9 +4,9 @@ name = "Arne Bahlo"
 url = "https://arne.me"
 joined = "2023-11-12"
 rss_feeds = [
-  { title = "Arne Bahlo", xml_url = "https://arne.me/articles/atom.xml", html_url = "https://arne.me/articles"},
-  { title = "Arne’s Weekly", xml_url = "https://arne.me/weekly/atom.xml", html_url = "https://arne.me/weekly"},
-  { title = "Arne Bahlo’s Book Reviews", xml_url ="https://arne.me/book-reviews/feed.xml", html_url = "https://arne.me/book-reviews" }
+  { title = "Arne Bahlo", xml_url = "https://arne.me/articles/atom.xml", html_url = "https://arne.me/articles" },
+  { title = "Arne’s Weekly", xml_url = "https://arne.me/weekly/atom.xml", html_url = "https://arne.me/weekly" },
+  { title = "Arne Bahlo’s Book Reviews", xml_url = "https://arne.me/book-reviews/feed.xml", html_url = "https://arne.me/book-reviews" },
 ]
 
 [[members]]
@@ -35,7 +35,7 @@ url = "https://blog.kotatsu.dev"
 joined = "2023-11-15"
 rss_feeds = [
   { xml_url = "https://blog.kotatsu.dev/feed.xml" },
-  { title = "kotatsuyaki’s notes", xml_url = "https://blog.kotatsu.dev/notes.xml", html_url = "https://blog.kotatsu.dev/notes" }
+  { title = "kotatsuyaki’s notes", xml_url = "https://blog.kotatsu.dev/notes.xml", html_url = "https://blog.kotatsu.dev/notes" },
 ]
 
 [[members]]
@@ -43,7 +43,7 @@ slug = "cv"
 name = "Christoph Voigt"
 url = "https://christophvoigt.com"
 joined = "2023-11-15"
-rss_feeds = [{ xml_url =  "https://christophvoigt.com/rss.xml" }]
+rss_feeds = [{ xml_url = "https://christophvoigt.com/rss.xml" }]
 
 [[members]]
 slug = "igor"
@@ -56,21 +56,13 @@ slug = "hexedit"
 name = "HexEdit Reality"
 url = "https://hexeditreality.com/"
 joined = "2023-11-24"
-rss_feeds = [
-  { xml_url = "https://hexeditreality.com/index.xml" }
-]
+rss_feeds = [{ xml_url = "https://hexeditreality.com/index.xml" }]
 
 [[members]]
 slug = "stefan"
 name = "Stefan Kühnel"
 url = "https://stefankuehnel.com"
 joined = "2023-11-27"
-
-[[members]]
-slug = "dan"
-name = "Dan Newman"
-url = "https://dan.newman.is"
-joined = "2023-12-13"
 
 [[members]]
 slug = "foreverliketh.is"
