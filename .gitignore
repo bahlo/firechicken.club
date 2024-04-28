@@ -1,4 +1,5 @@
-/target
-/static/fonts/*
-!/static/fonts/.gitkeep
+/zig-cache
+/zig-out
+/.envrc
 /dist
+/static/fonts/obviously-condensed
