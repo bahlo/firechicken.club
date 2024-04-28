@@ -1,6 +1,17 @@
 const std = @import("std");
 
 pub fn main() !void {
+    const data = .{
+        .title = "TODO",
+        .description = "TODO",
+        .url = "TODO",
+        .meta = .{
+            .css_hash = "TODO",
+            .git_sha = "TODO",
+            .git_sha_short = "TODO",
+        }
+    };
+
     // Prints to stderr (it's a shortcut based on `std.io.getStdErr()`)
     std.debug.print("All your {s} are belong to us.\n", .{"codebase"});
 
