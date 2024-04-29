@@ -1,6 +1,7 @@
 const std = @import("std");
 const Child = std.process.Child;
 const ArrayList = std.ArrayList;
+const Blake3 = std.crypto.hash.Blake3;
 
 const mustache = @import("mustache");
 
@@ -29,6 +30,18 @@ pub fn main() !void {
         members: []const Member,
     };
 
+    const cwd = try std.fs.cwd().realpathAlloc(allocator, ".");
+    defer allocator.free(cwd);
+
+    // hash css file for cache busting
+    const css_path = try std.fs.path.join(allocator, &.{ cwd, "static", "style.css" });
+    defer allocator.free(css_path);
+    const css = try std.fs.cwd().readFileAlloc(allocator, css_path, std.math.maxInt(usize));
+    defer allocator.free(css);
+    var css_blake3_hash: [32]u8 = undefined;
+    Blake3.hash(css, css_blake3_hash[0..], .{});
+    const css_hash = std.fmt.bytesToHex(&css_blake3_hash, .lower)[0..16];
+
     // get git sha
     const git_sha_result = try Child.run(.{
         .allocator = allocator,
@@ -39,17 +52,13 @@ pub fn main() !void {
     if (git_sha_result.term.Exited != 0) {
         @panic("git rev-parse HEAD failed");
     }
-
-    // TODO: Replace with actual values
     const git_sha = git_sha_result.stdout;
+
     const meta = Meta{
-        .css_hash = "TODO",
+        .css_hash = css_hash[0..],
         .git_sha = git_sha,
         .git_sha_short = git_sha[0..7],
     };
-
-    const cwd = try std.fs.cwd().realpathAlloc(allocator, ".");
-    defer allocator.free(cwd);
 
     // MARK: Parse templates
 
