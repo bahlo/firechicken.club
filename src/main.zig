@@ -100,6 +100,17 @@ pub fn main() !void {
     };
     defer index_template.deinit(allocator);
 
+    const not_found_path = try std.fs.path.join(allocator, &.{ cwd, "templates", "404.html" });
+    defer allocator.free(not_found_path);
+    const not_found_template_result = try mustache.parseFile(allocator, not_found_path, .{}, .{});
+    const not_found_template = switch (not_found_template_result) {
+        .parse_error => |parse_error| return parse_error.parse_error,
+        .success => |template| blk: {
+            break :blk template;
+        },
+    };
+    defer not_found_template.deinit(allocator);
+
     const colophon_path = try std.fs.path.join(allocator, &.{ cwd, "templates", "colophon.html" });
     defer allocator.free(colophon_path);
     const colophon_template_result = try mustache.parseFile(allocator, colophon_path, .{}, .{});
@@ -128,6 +139,16 @@ pub fn main() !void {
         .members = &members.members,
         .meta = meta,
     }, index_file.writer());
+
+    var not_found_file = try dist_dir.createFile("404.html", .{});
+    defer not_found_file.close();
+    try mustache.renderPartials(not_found_template, partials, Context{
+        .title = "Not Found — Fire Chicken Webring",
+        .description = "This page could not be found.",
+        .url = "https://firechicken.club/404",
+        .members = &members.members,
+        .meta = meta,
+    }, not_found_file.writer());
 
     try dist_dir.makeDir("colophon");
     var colophon_dir = try dist_dir.openDir("colophon", .{});
