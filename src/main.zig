@@ -1,4 +1,5 @@
 const std = @import("std");
+const fs = std.fs;
 const Child = std.process.Child;
 const ArrayList = std.ArrayList;
 const Blake3 = std.crypto.hash.Blake3;
@@ -30,13 +31,13 @@ pub fn main() !void {
         members: []const Member,
     };
 
-    const cwd = try std.fs.cwd().realpathAlloc(allocator, ".");
+    const cwd = try fs.cwd().realpathAlloc(allocator, ".");
     defer allocator.free(cwd);
 
     // hash css file for cache busting
-    const css_path = try std.fs.path.join(allocator, &.{ cwd, "static", "style.css" });
+    const css_path = try fs.path.join(allocator, &.{ cwd, "static", "style.css" });
     defer allocator.free(css_path);
-    const css = try std.fs.cwd().readFileAlloc(allocator, css_path, std.math.maxInt(usize));
+    const css = try fs.cwd().readFileAlloc(allocator, css_path, std.math.maxInt(usize));
     defer allocator.free(css);
     var css_blake3_hash: [32]u8 = undefined;
     Blake3.hash(css, css_blake3_hash[0..], .{});
@@ -62,7 +63,7 @@ pub fn main() !void {
 
     // MARK: Parse templates
 
-    const header_path = try std.fs.path.join(allocator, &.{ cwd, "templates", "header.html" });
+    const header_path = try fs.path.join(allocator, &.{ cwd, "templates", "header.html" });
     defer allocator.free(header_path);
     const header_template_result = try mustache.parseFile(allocator, header_path, .{}, .{});
     const header_template = switch (header_template_result) {
@@ -73,7 +74,7 @@ pub fn main() !void {
     };
     defer header_template.deinit(allocator);
 
-    const footer_path = try std.fs.path.join(allocator, &.{ cwd, "templates", "footer.html" });
+    const footer_path = try fs.path.join(allocator, &.{ cwd, "templates", "footer.html" });
     defer allocator.free(footer_path);
     const footer_template_result = try mustache.parseFile(allocator, footer_path, .{}, .{});
     const footer_template = switch (footer_template_result) {
@@ -89,7 +90,7 @@ pub fn main() !void {
         .{ "footer", footer_template },
     };
 
-    const index_path = try std.fs.path.join(allocator, &.{ cwd, "templates", "index.html" });
+    const index_path = try fs.path.join(allocator, &.{ cwd, "templates", "index.html" });
     defer allocator.free(index_path);
     const index_template_result = try mustache.parseFile(allocator, index_path, .{}, .{});
     const index_template = switch (index_template_result) {
@@ -100,7 +101,7 @@ pub fn main() !void {
     };
     defer index_template.deinit(allocator);
 
-    const not_found_path = try std.fs.path.join(allocator, &.{ cwd, "templates", "404.html" });
+    const not_found_path = try fs.path.join(allocator, &.{ cwd, "templates", "404.html" });
     defer allocator.free(not_found_path);
     const not_found_template_result = try mustache.parseFile(allocator, not_found_path, .{}, .{});
     const not_found_template = switch (not_found_template_result) {
@@ -111,7 +112,7 @@ pub fn main() !void {
     };
     defer not_found_template.deinit(allocator);
 
-    const colophon_path = try std.fs.path.join(allocator, &.{ cwd, "templates", "colophon.html" });
+    const colophon_path = try fs.path.join(allocator, &.{ cwd, "templates", "colophon.html" });
     defer allocator.free(colophon_path);
     const colophon_template_result = try mustache.parseFile(allocator, colophon_path, .{}, .{});
     const colophon_template = switch (colophon_template_result) {
@@ -124,10 +125,10 @@ pub fn main() !void {
 
     // MARK: Render to files
 
-    std.fs.cwd().deleteTree("dist") catch unreachable;
-    try std.fs.cwd().makeDir("dist");
+    fs.cwd().deleteTree("dist") catch unreachable;
+    try fs.cwd().makeDir("dist");
 
-    var dist_dir = try std.fs.cwd().openDir("dist", .{});
+    var dist_dir = try fs.cwd().openDir("dist", .{});
     defer dist_dir.close();
 
     var index_file = try dist_dir.createFile("index.html", .{});
@@ -164,4 +165,41 @@ pub fn main() !void {
     }, colophon_file.writer());
 
     // MARK: Copy assets
+
+    var static_dir = try fs.cwd().openDir("static", .{});
+    defer static_dir.close();
+    try copyDirRecursive(static_dir, dist_dir);
+}
+
+fn copyDirRecursive(src_dir: fs.Dir, dest_dir: fs.Dir) !void {
+    var iter = src_dir.iterate();
+
+    // no unbound while loops, 256 is enough for anyone
+    var i: u8 = 0;
+    while (i < std.math.maxInt(u8)) : (i += 1) {
+        const entry = try iter.next();
+        if (entry == null) {
+            break;
+        }
+
+        switch (entry.?.kind) {
+            .file => try src_dir.copyFile(entry.?.name, dest_dir, entry.?.name, .{}),
+            .directory => {
+                try dest_dir.makeDir(entry.?.name);
+
+                const open_dir_options = fs.Dir.OpenDirOptions{
+                    .access_sub_paths = true,
+                    .iterate = true,
+                    .no_follow = true,
+                };
+
+                var src_entry_dir = try src_dir.openDir(entry.?.name, open_dir_options);
+                defer src_entry_dir.close();
+                var dest_entry_dir = try dest_dir.openDir(entry.?.name, open_dir_options);
+                defer dest_entry_dir.close();
+                try copyDirRecursive(src_entry_dir, dest_entry_dir);
+            },
+            else => @panic("non-file/directory entry in static directory"),
+        }
+    }
 }
