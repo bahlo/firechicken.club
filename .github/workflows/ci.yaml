@@ -39,3 +39,4 @@ jobs:
         with:
           folder: dist
           branch: dist
+          commit-message: "Deploying to dist from ${{ github.sha }}"
