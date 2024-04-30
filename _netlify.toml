@@ -1,0 +1,2 @@
+[build]
+command = "curl $FONT_ZIP_URL | bsdtar -xf- -C static/fonts"
