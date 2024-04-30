@@ -5,7 +5,7 @@
     </head>
     <body>
         {{#rss_feeds}}
-        <outline text="{{title}}" title="{{title}}" type="rss" xmlUrl="{{xml_url}}" htmlUrl={{html_url}} />
+        <outline text="{{title}}" title="{{title}}" type="rss" xmlUrl="{{xml_url}}" htmlUrl="{{html_url}}" />
         {{/rss_feeds}}
     </body>
 </opml>
