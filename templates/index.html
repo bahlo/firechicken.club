@@ -18,16 +18,16 @@
     <p class="description">An invite-only webring for personal websites.</p>
     <div>
         This is what it looks like:
-        <a class="no-underline" href="/{{members[0].slug}}/prev">←</a>&nbsp;<a
+        <a class="no-underline" href="/{{first_member.slug}}/prev">←</a>&nbsp;<a
             href="https://firechicken.club"
             >Fire&nbsp;Chicken&nbsp;Webring</a
-        >&nbsp;<a class="no-underline" href="/{{first_slug}}/next">→</a>
+        >&nbsp;<a class="no-underline" href="/{{first_member.slug}}/next">→</a>
         or
-        <a class="no-underline" href="/{{first_slug}}/prev">←</a>&nbsp;<a
+        <a class="no-underline" href="/{{first_member.slug}}/prev">←</a>&nbsp;<a
             class="no-underline"
             href="https://firechicken.club"
             >🔥&#8288;🐓</a
-        >&nbsp;<a class="no-underline" href="/{{members[0].slug}}/next">→</a>
+        >&nbsp;<a class="no-underline" href="/{{first_member.slug}}/next">→</a>
     </div>
     <table class="members">
         <thead>
@@ -60,7 +60,10 @@
         </details>
         <details>
             <summary>Can I subscribe to all websites at once?</summary>
-            <p>Yes, there's an <a href="/opml.xml">OPML file</a> you can import into your RSS reader to subscribe to all sites at once.</p>
+            <p>
+                Yes, there's an <a href="/opml.xml">OPML file</a> you can import
+                into your RSS reader to subscribe to all sites at once.
+            </p>
         </details>
         <details>
             <summary>How do I join?</summary>

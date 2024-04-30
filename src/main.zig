@@ -33,6 +33,7 @@ pub fn main() !void {
         url: []const u8,
         meta: Meta,
         members: []const Member,
+        first_member: Member,
     };
 
     const cwd = try fs.cwd().realpathAlloc(allocator, ".");
@@ -153,6 +154,7 @@ pub fn main() !void {
         .description = "An invite-only webring for personal websites.",
         .url = "https://firechicken.club",
         .members = &members.members,
+        .first_member = members.members[0],
         .meta = meta,
     }, index_file.writer());
 
@@ -163,6 +165,7 @@ pub fn main() !void {
         .description = "This page could not be found.",
         .url = "https://firechicken.club/404",
         .members = &members.members,
+        .first_member = members.members[0],
         .meta = meta,
     }, not_found_file.writer());
 
@@ -207,6 +210,7 @@ pub fn main() !void {
         .description = "The colophon for the Fire Chicken Webring.",
         .url = "https://firechicken.club/colophon",
         .members = &members.members,
+        .first_member = members.members[0],
         .meta = meta,
     }, colophon_file.writer());
 
