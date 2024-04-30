@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  - push
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: goto-bus-stop/setup-zig@v2
+      - run: zig fmt --check .
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: goto-bus-stop/setup-zig@v2
+      - run: zig build test
+  deploy:
+    runs-on: ubuntu-latest
+    # if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+    needs:
+      - test
+      - lint
+    steps:
+      - uses: actions/checkout@v3
+      - uses: goto-bus-stop/setup-zig@v2
+      - run: zig build run
+      - run: rm .gitignore # necessary for the deploy action
+      - uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist
+          branch: dist
