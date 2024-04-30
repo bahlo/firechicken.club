@@ -22,7 +22,7 @@ jobs:
       - run: zig build test
   deploy:
     runs-on: ubuntu-latest
-    # if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main'
     permissions:
       contents: write
     needs:
