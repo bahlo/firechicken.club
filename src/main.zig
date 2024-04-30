@@ -1,13 +1,16 @@
 const std = @import("std");
 const fs = std.fs;
+const io = std.io;
 const Child = std.process.Child;
 const ArrayList = std.ArrayList;
 const Blake3 = std.crypto.hash.Blake3;
+const Allocator = std.mem.Allocator;
 
 const mustache = @import("mustache");
 
 const members = @import("members.zig");
 const Member = members.Member;
+const RssFeed = members.RssFeed;
 
 pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
@@ -164,6 +167,12 @@ pub fn main() !void {
         .meta = meta,
     }, colophon_file.writer());
 
+    // MARK: Render _redirects
+
+    var redirects_file = try dist_dir.createFile("_redirects", .{});
+    defer redirects_file.close();
+    try renderRedirects(redirects_file.writer(), &members.members);
+
     // MARK: Copy assets
 
     var static_dir = try fs.cwd().openDir("static", .{});
@@ -202,4 +211,81 @@ fn copyDirRecursive(src_dir: fs.Dir, dest_dir: fs.Dir) !void {
             else => @panic("non-file/directory entry in static directory"),
         }
     }
+}
+
+fn renderRedirects(writer: anytype, member_list: []const Member) !void {
+    var prev_member = member_list[member_list.len - 1];
+    var last_invalid_member: ?Member = null;
+    for (member_list) |member| {
+        // always redirect to prev member, even from invalid slugs
+        try writer.print("/{s}/prev {s} 302\n", .{member.slug, prev_member.url});
+
+        if (last_invalid_member != null) {
+            try writer.print("/{s}/next {s} 302\n", .{last_invalid_member.?.slug, member.url});
+            last_invalid_member = null;
+        }
+
+        if (member.invalid) {
+            if (last_invalid_member != null) {
+                @panic("two consecutive invalid members are not supported, have fun fixing this");
+            }
+
+            last_invalid_member = member;
+            continue;
+        }
+
+        try writer.print("/{s}/next {s} 302\n", .{prev_member.slug, member.url});
+
+        prev_member = member;
+    }
+}
+
+test "redirects render correctly"  {
+    var buf = ArrayList(u8).init(std.testing.allocator);
+    defer buf.deinit();
+
+    const member_list = [_]Member{
+        Member{.slug = "foo", .name = "foo", .url = "https://foo.test", .host = "foo.test", .invalid = false, .joined = "2024-04-30", .rss_feeds = &[_]RssFeed{}},
+        Member{.slug = "bar", .name = "bar", .url = "https://bar.test", .host = "bar.test", .invalid = false, .joined = "2024-04-30", .rss_feeds = &[_]RssFeed{}},
+        Member{.slug = "baz", .name = "baz", .url = "https://baz.test", .host = "baz.test", .invalid = false, .joined = "2024-04-30", .rss_feeds = &[_]RssFeed{}},
+    };
+
+    try renderRedirects(buf.writer(), &member_list);
+    const actual = try buf.toOwnedSlice();
+    defer std.testing.allocator.free(actual);
+
+    try std.testing.expectEqualStrings(
+    \\/foo/prev https://baz.test 302
+    \\/baz/next https://foo.test 302
+    \\/bar/prev https://foo.test 302
+    \\/foo/next https://bar.test 302
+    \\/baz/prev https://bar.test 302
+    \\/bar/next https://baz.test 302
+    \\
+    , actual);
+}
+
+test "invalid members are skipped in redirects"  {
+    var buf = ArrayList(u8).init(std.testing.allocator);
+    defer buf.deinit();
+
+    const member_list = [_]Member{
+        Member{.slug = "foo", .name = "foo", .url = "https://foo.test", .host = "foo.test", .invalid = false, .joined = "2024-04-30", .rss_feeds = &[_]RssFeed{}},
+        Member{.slug = "bar", .name = "bar", .url = "https://bar.test", .host = "bar.test", .invalid = true, .joined = "2024-04-30", .rss_feeds = &[_]RssFeed{}},
+        Member{.slug = "baz", .name = "baz", .url = "https://baz.test", .host = "baz.test", .invalid = false, .joined = "2024-04-30", .rss_feeds = &[_]RssFeed{}},
+    };
+
+    try renderRedirects(buf.writer(), &member_list);
+    const actual = try buf.toOwnedSlice();
+    defer std.testing.allocator.free(actual);
+
+    try std.testing.expectEqualStrings(
+    \\/foo/prev https://baz.test 302
+    \\/baz/next https://foo.test 302
+    \\/bar/prev https://foo.test 302
+    \\/baz/prev https://foo.test 302
+    \\/bar/next https://baz.test 302
+    \\/foo/next https://baz.test 302
+    \\
+    , actual);
 }
