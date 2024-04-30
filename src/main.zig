@@ -143,7 +143,7 @@ pub fn main() !void {
     fs.cwd().deleteTree("dist") catch unreachable;
     try fs.cwd().makeDir("dist");
 
-    var dist_dir = try fs.cwd().openDir("dist", .{});
+    var dist_dir = try fs.cwd().openDir("dist", .{ .iterate = true }); // iteration is necessary for the copyDirRecursive call later
     defer dist_dir.close();
 
     var index_file = try dist_dir.createFile("index.html", .{});
@@ -218,7 +218,7 @@ pub fn main() !void {
 
     // MARK: Copy assets
 
-    var static_dir = try fs.cwd().openDir("static", .{});
+    var static_dir = try fs.cwd().openDir("static", .{ .iterate = true });
     defer static_dir.close();
     try copyDirRecursive(static_dir, dist_dir);
 }
