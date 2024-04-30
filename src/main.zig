@@ -39,7 +39,7 @@ pub fn main() !void {
     const cwd = try fs.cwd().realpathAlloc(allocator, ".");
     defer allocator.free(cwd);
 
-    // hash css file for cache busting
+    // Hash css file for cache busting
     const css_path = try fs.path.join(allocator, &.{ cwd, "static", "style.css" });
     defer allocator.free(css_path);
     const css = try fs.cwd().readFileAlloc(allocator, css_path, std.math.maxInt(usize));
@@ -66,80 +66,16 @@ pub fn main() !void {
         .git_sha_short = git_sha[0..7],
     };
 
-    // MARK: Parse templates
+    // Render templates
 
-    const header_path = try fs.path.join(allocator, &.{ cwd, "templates", "header.html" });
-    defer allocator.free(header_path);
-    const header_template_result = try mustache.parseFile(allocator, header_path, .{}, .{});
-    const header_template = switch (header_template_result) {
-        .parse_error => |parse_error| return parse_error.parse_error,
-        .success => |template| blk: {
-            break :blk template;
-        },
-    };
+    const header_template = try parseTemplate(allocator, cwd, "header.html");
     defer header_template.deinit(allocator);
-
-    const footer_path = try fs.path.join(allocator, &.{ cwd, "templates", "footer.html" });
-    defer allocator.free(footer_path);
-    const footer_template_result = try mustache.parseFile(allocator, footer_path, .{}, .{});
-    const footer_template = switch (footer_template_result) {
-        .parse_error => |parse_error| return parse_error.parse_error,
-        .success => |template| blk: {
-            break :blk template;
-        },
-    };
+    const footer_template = try parseTemplate(allocator, cwd, "footer.html");
     defer footer_template.deinit(allocator);
-
     const partials = .{
         .{ "header", header_template },
         .{ "footer", footer_template },
     };
-
-    const index_path = try fs.path.join(allocator, &.{ cwd, "templates", "index.html" });
-    defer allocator.free(index_path);
-    const index_template_result = try mustache.parseFile(allocator, index_path, .{}, .{});
-    const index_template = switch (index_template_result) {
-        .parse_error => |parse_error| return parse_error.parse_error,
-        .success => |template| blk: {
-            break :blk template;
-        },
-    };
-    defer index_template.deinit(allocator);
-
-    const not_found_path = try fs.path.join(allocator, &.{ cwd, "templates", "404.html" });
-    defer allocator.free(not_found_path);
-    const not_found_template_result = try mustache.parseFile(allocator, not_found_path, .{}, .{});
-    const not_found_template = switch (not_found_template_result) {
-        .parse_error => |parse_error| return parse_error.parse_error,
-        .success => |template| blk: {
-            break :blk template;
-        },
-    };
-    defer not_found_template.deinit(allocator);
-
-    const colophon_path = try fs.path.join(allocator, &.{ cwd, "templates", "colophon.html" });
-    defer allocator.free(colophon_path);
-    const colophon_template_result = try mustache.parseFile(allocator, colophon_path, .{}, .{});
-    const colophon_template = switch (colophon_template_result) {
-        .parse_error => |parse_error| return parse_error.parse_error,
-        .success => |template| blk: {
-            break :blk template;
-        },
-    };
-    defer colophon_template.deinit(allocator);
-
-    const opml_path = try fs.path.join(allocator, &.{ cwd, "templates", "opml.xml" });
-    defer allocator.free(opml_path);
-    const opml_template_result = try mustache.parseFile(allocator, opml_path, .{}, .{});
-    const opml_template = switch (opml_template_result) {
-        .parse_error => |parse_error| return parse_error.parse_error,
-        .success => |template| blk: {
-            break :blk template;
-        },
-    };
-    defer opml_template.deinit(allocator);
-
-    // MARK: Render to files
 
     fs.cwd().deleteTree("dist") catch unreachable;
     try fs.cwd().makeDir("dist");
@@ -147,6 +83,8 @@ pub fn main() !void {
     var dist_dir = try fs.cwd().openDir("dist", .{ .iterate = true }); // iteration is necessary for the copyDirRecursive call later
     defer dist_dir.close();
 
+    const index_template = try parseTemplate(allocator, cwd, "index.html");
+    defer index_template.deinit(allocator);
     var index_file = try dist_dir.createFile("index.html", .{});
     defer index_file.close();
     try mustache.renderPartials(index_template, partials, Context{
@@ -158,6 +96,8 @@ pub fn main() !void {
         .meta = meta,
     }, index_file.writer());
 
+    const not_found_template = try parseTemplate(allocator, cwd, "404.html");
+    defer not_found_template.deinit(allocator);
     var not_found_file = try dist_dir.createFile("404.html", .{});
     defer not_found_file.close();
     try mustache.renderPartials(not_found_template, partials, Context{
@@ -187,11 +127,13 @@ pub fn main() !void {
         }
     }
     const rss_feeds = try rss_feed_list.toOwnedSlice();
+    defer allocator.free(rss_feeds);
 
-    const date_created = try datetime_http(allocator);
+    const date_created = try datetimeHttp(allocator);
     defer allocator.free(date_created);
 
-    defer allocator.free(rss_feeds);
+    const opml_template = try parseTemplate(allocator, cwd, "opml.xml");
+    defer opml_template.deinit(allocator);
     var opml_file = try dist_dir.createFile("opml.xml", .{});
     defer opml_file.close();
     try mustache.render(opml_template, .{
@@ -200,6 +142,8 @@ pub fn main() !void {
         .rss_feeds = rss_feeds,
     }, opml_file.writer());
 
+    const colophon_template = try parseTemplate(allocator, cwd, "colophon.html");
+    defer colophon_template.deinit(allocator);
     try dist_dir.makeDir("colophon");
     var colophon_dir = try dist_dir.openDir("colophon", .{});
     defer colophon_dir.close();
@@ -214,13 +158,13 @@ pub fn main() !void {
         .meta = meta,
     }, colophon_file.writer());
 
-    // MARK: Render _redirects
+    // Render _redirects
 
     var redirects_file = try dist_dir.createFile("_redirects", .{});
     defer redirects_file.close();
     try renderRedirects(redirects_file.writer(), &members.members);
 
-    // MARK: Copy assets
+    // Copy assets
 
     var static_dir = try fs.cwd().openDir("static", .{ .iterate = true });
     defer static_dir.close();
@@ -258,6 +202,19 @@ fn copyDirRecursive(src_dir: fs.Dir, dest_dir: fs.Dir) !void {
             else => @panic("non-file/directory entry in static directory"),
         }
     }
+}
+
+fn parseTemplate(allocator: Allocator, cwd: []const u8, filename: []const u8) !mustache.Template {
+    const path = try fs.path.join(allocator, &.{ cwd, "templates", filename });
+    defer allocator.free(path);
+
+    const res = try mustache.parseFile(allocator, path, .{}, .{});
+    return switch (res) {
+        .parse_error => |parse_error| return parse_error.parse_error,
+        .success => |template| blk: {
+            break :blk template;
+        },
+    };
 }
 
 fn renderRedirects(writer: anytype, member_list: []const Member) !void {
@@ -339,7 +296,7 @@ test "invalid members are skipped in redirects" {
 
 // The caller owns the returned memory.
 // Returns the current datetime (approx.) in the RFC_882 format.
-fn datetime_http(allocator: Allocator) ![]const u8 {
+fn datetimeHttp(allocator: Allocator) ![]const u8 {
     const now = time.timestamp();
     const begin_millenial = 946684800; // 2000-01-01T00:00:00Z
     if (now < begin_millenial) {
