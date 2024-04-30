@@ -9,12 +9,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: goto-bus-stop/setup-zig@v2
+        with:
+          version: 0.12
       - run: zig fmt --check .
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: goto-bus-stop/setup-zig@v2
+        with:
+          version: 0.12
       - run: zig build test
   deploy:
     runs-on: ubuntu-latest
@@ -27,6 +31,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: goto-bus-stop/setup-zig@v2
+        with:
+          version: 0.12
       - run: zig build run
       - run: rm .gitignore # necessary for the deploy action
       - uses: JamesIves/github-pages-deploy-action@v4
