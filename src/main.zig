@@ -1,6 +1,7 @@
 const std = @import("std");
 const fs = std.fs;
 const io = std.io;
+const time = std.time;
 const Child = std.process.Child;
 const ArrayList = std.ArrayList;
 const Blake3 = std.crypto.hash.Blake3;
@@ -183,12 +184,16 @@ pub fn main() !void {
         }
     }
     const rss_feeds = try rss_feed_list.toOwnedSlice();
+
+    const date_created = try datetime_http(allocator);
+    defer allocator.free(date_created);
+
     defer allocator.free(rss_feeds);
     var opml_file = try dist_dir.createFile("opml.xml", .{});
     defer opml_file.close();
     try mustache.render(opml_template, .{
         .title = "RSS Feeds for all Fire Chicken Webring members",
-        .date_created = "lol fix me",
+        .date_created = date_created,
         .rss_feeds = rss_feeds,
     }, opml_file.writer());
 
@@ -256,10 +261,10 @@ fn renderRedirects(writer: anytype, member_list: []const Member) !void {
     var last_invalid_member: ?Member = null;
     for (member_list) |member| {
         // always redirect to prev member, even from invalid slugs
-        try writer.print("/{s}/prev {s} 302\n", .{member.slug, prev_member.url});
+        try writer.print("/{s}/prev {s} 302\n", .{ member.slug, prev_member.url });
 
         if (last_invalid_member != null) {
-            try writer.print("/{s}/next {s} 302\n", .{last_invalid_member.?.slug, member.url});
+            try writer.print("/{s}/next {s} 302\n", .{ last_invalid_member.?.slug, member.url });
             last_invalid_member = null;
         }
 
@@ -272,20 +277,20 @@ fn renderRedirects(writer: anytype, member_list: []const Member) !void {
             continue;
         }
 
-        try writer.print("/{s}/next {s} 302\n", .{prev_member.slug, member.url});
+        try writer.print("/{s}/next {s} 302\n", .{ prev_member.slug, member.url });
 
         prev_member = member;
     }
 }
 
-test "redirects render correctly"  {
+test "redirects render correctly" {
     var buf = ArrayList(u8).init(std.testing.allocator);
     defer buf.deinit();
 
     const member_list = [_]Member{
-        Member{.slug = "foo", .name = "foo", .url = "https://foo.test", .host = "foo.test", .invalid = false, .joined = "2024-04-30", .rss_feeds = &[_]RssFeed{}},
-        Member{.slug = "bar", .name = "bar", .url = "https://bar.test", .host = "bar.test", .invalid = false, .joined = "2024-04-30", .rss_feeds = &[_]RssFeed{}},
-        Member{.slug = "baz", .name = "baz", .url = "https://baz.test", .host = "baz.test", .invalid = false, .joined = "2024-04-30", .rss_feeds = &[_]RssFeed{}},
+        Member{ .slug = "foo", .name = "foo", .url = "https://foo.test", .host = "foo.test", .invalid = false, .joined = "2024-04-30", .rss_feeds = &[_]RssFeed{} },
+        Member{ .slug = "bar", .name = "bar", .url = "https://bar.test", .host = "bar.test", .invalid = false, .joined = "2024-04-30", .rss_feeds = &[_]RssFeed{} },
+        Member{ .slug = "baz", .name = "baz", .url = "https://baz.test", .host = "baz.test", .invalid = false, .joined = "2024-04-30", .rss_feeds = &[_]RssFeed{} },
     };
 
     try renderRedirects(buf.writer(), &member_list);
@@ -293,24 +298,24 @@ test "redirects render correctly"  {
     defer std.testing.allocator.free(actual);
 
     try std.testing.expectEqualStrings(
-    \\/foo/prev https://baz.test 302
-    \\/baz/next https://foo.test 302
-    \\/bar/prev https://foo.test 302
-    \\/foo/next https://bar.test 302
-    \\/baz/prev https://bar.test 302
-    \\/bar/next https://baz.test 302
-    \\
+        \\/foo/prev https://baz.test 302
+        \\/baz/next https://foo.test 302
+        \\/bar/prev https://foo.test 302
+        \\/foo/next https://bar.test 302
+        \\/baz/prev https://bar.test 302
+        \\/bar/next https://baz.test 302
+        \\
     , actual);
 }
 
-test "invalid members are skipped in redirects"  {
+test "invalid members are skipped in redirects" {
     var buf = ArrayList(u8).init(std.testing.allocator);
     defer buf.deinit();
 
     const member_list = [_]Member{
-        Member{.slug = "foo", .name = "foo", .url = "https://foo.test", .host = "foo.test", .invalid = false, .joined = "2024-04-30", .rss_feeds = &[_]RssFeed{}},
-        Member{.slug = "bar", .name = "bar", .url = "https://bar.test", .host = "bar.test", .invalid = true, .joined = "2024-04-30", .rss_feeds = &[_]RssFeed{}},
-        Member{.slug = "baz", .name = "baz", .url = "https://baz.test", .host = "baz.test", .invalid = false, .joined = "2024-04-30", .rss_feeds = &[_]RssFeed{}},
+        Member{ .slug = "foo", .name = "foo", .url = "https://foo.test", .host = "foo.test", .invalid = false, .joined = "2024-04-30", .rss_feeds = &[_]RssFeed{} },
+        Member{ .slug = "bar", .name = "bar", .url = "https://bar.test", .host = "bar.test", .invalid = true, .joined = "2024-04-30", .rss_feeds = &[_]RssFeed{} },
+        Member{ .slug = "baz", .name = "baz", .url = "https://baz.test", .host = "baz.test", .invalid = false, .joined = "2024-04-30", .rss_feeds = &[_]RssFeed{} },
     };
 
     try renderRedirects(buf.writer(), &member_list);
@@ -318,12 +323,93 @@ test "invalid members are skipped in redirects"  {
     defer std.testing.allocator.free(actual);
 
     try std.testing.expectEqualStrings(
-    \\/foo/prev https://baz.test 302
-    \\/baz/next https://foo.test 302
-    \\/bar/prev https://foo.test 302
-    \\/baz/prev https://foo.test 302
-    \\/bar/next https://baz.test 302
-    \\/foo/next https://baz.test 302
-    \\
+        \\/foo/prev https://baz.test 302
+        \\/baz/next https://foo.test 302
+        \\/bar/prev https://foo.test 302
+        \\/baz/prev https://foo.test 302
+        \\/bar/next https://baz.test 302
+        \\/foo/next https://baz.test 302
+        \\
     , actual);
+}
+
+// The caller owns the returned memory.
+// Returns the current datetime (approx.) in the RFC_882 format.
+fn datetime_http(allocator: Allocator) ![]const u8 {
+    const now = time.timestamp();
+    const begin_millenial = 946684800; // 2000-01-01T00:00:00Z
+    if (now < begin_millenial) {
+        @panic("time is before 2020-01-01T00:00:00Z, either you're a time traveler or your clock is wrong");
+    }
+    var day = @divFloor(now - begin_millenial, 60 * 60 * 24);
+    const weekdays = [7][]const u8{
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat",
+        "Sun",
+    };
+    const weekday_name = weekdays[@intCast(@mod(day, 7) - 2)]; // - 2 because 2000-01-01 is a wed
+    var year: u16 = 2000;
+    var is_leap_year = false;
+    while (year < 3000) {
+        const new_year = year + 1;
+        var days_in_year: u16 = 365;
+        is_leap_year = false;
+        if (@mod(new_year, 4) == 0) {
+            if (@mod(new_year, 100) != 0 or @mod(new_year, 400) == 0) {
+                // leap year
+                days_in_year = 366;
+                is_leap_year = true;
+            }
+        }
+
+        if (day < days_in_year) {
+            break;
+        }
+
+        year = new_year;
+        day -= days_in_year;
+    }
+    if (year >= 3000) {
+        @panic("we don't support dates after 3000-01-01T00:00:00Z. hello to the future!");
+    }
+    const month_days = [12]u8{ 31, if (is_leap_year) 29 else 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+    const month_names = [12][]const u8{
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+    };
+    const month = for (month_days, 0..) |days, month| {
+        if (day <= days) {
+            break month;
+        }
+        day -= days;
+    } else unreachable;
+    const month_name = month_names[month];
+    const seconds_in_day = @mod(now - begin_millenial, 60 * 60 * 24);
+    const hour = @divFloor(seconds_in_day, 3600);
+    const minute = @divFloor(seconds_in_day - hour * 3600, 60);
+    const second = seconds_in_day - hour * 3600 - minute * 60;
+
+    // Convert to u8, otherwise Zig will prepend a sign when formatting.
+    const u_day: u8 = @intCast(day);
+    const u_hour: u8 = @intCast(hour);
+    const u_minute: u8 = @intCast(minute);
+    const u_second: u8 = @intCast(second);
+
+    var buf = ArrayList(u8).init(allocator);
+    try std.fmt.format(buf.writer(), "{s}, {d:0>2} {s} {d} {d:0>2}:{d:0>2}:{d:0>2} +0000", .{ weekday_name, u_day, month_name, year, u_hour, u_minute, u_second });
+    return try buf.toOwnedSlice();
 }
