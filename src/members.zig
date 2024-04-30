@@ -26,7 +26,7 @@ pub const members = [_]Member{ Member{ .slug = "arne", .name = "Arne Bahlo", .ur
     .url = "https://flbn.sh",
     .host = "flbn.sh",
     .joined = "2023-11-13",
-    .invalid = false,
+    .invalid = true,
     .rss_feeds = &[_]RssFeed{},
 }, Member{ .slug = "lukas", .name = "Lukas Malkmus", .url = "https://lukasmalkmus.com", .host = "lukasmalkmus.com", .joined = "2023-11-13", .invalid = false, .rss_feeds = &[_]RssFeed{} }, Member{
     .slug = "pwa",
