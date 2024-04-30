@@ -126,6 +126,17 @@ pub fn main() !void {
     };
     defer colophon_template.deinit(allocator);
 
+    const opml_path = try fs.path.join(allocator, &.{ cwd, "templates", "opml.xml" });
+    defer allocator.free(opml_path);
+    const opml_template_result = try mustache.parseFile(allocator, opml_path, .{}, .{});
+    const opml_template = switch (opml_template_result) {
+        .parse_error => |parse_error| return parse_error.parse_error,
+        .success => |template| blk: {
+            break :blk template;
+        },
+    };
+    defer opml_template.deinit(allocator);
+
     // MARK: Render to files
 
     fs.cwd().deleteTree("dist") catch unreachable;
@@ -153,6 +164,33 @@ pub fn main() !void {
         .members = &members.members,
         .meta = meta,
     }, not_found_file.writer());
+
+    // collect all rss feeds into one arraylist, the templating engine panics
+    // if you do nested loops
+    // plus we need to fill in title/html_url if null
+    var rss_feed_list = ArrayList(RssFeed).init(allocator);
+    defer rss_feed_list.deinit();
+    for (members.members) |member| {
+        for (member.rss_feeds) |rss_feed| {
+            var rss_feed_copy = rss_feed;
+            if (rss_feed_copy.title == null) {
+                rss_feed_copy.title = member.name;
+            }
+            if (rss_feed_copy.html_url == null) {
+                rss_feed_copy.html_url = member.url;
+            }
+            try rss_feed_list.append(rss_feed_copy);
+        }
+    }
+    const rss_feeds = try rss_feed_list.toOwnedSlice();
+    defer allocator.free(rss_feeds);
+    var opml_file = try dist_dir.createFile("opml.xml", .{});
+    defer opml_file.close();
+    try mustache.render(opml_template, .{
+        .title = "RSS Feeds for all Fire Chicken Webring members",
+        .date_created = "lol fix me",
+        .rss_feeds = rss_feeds,
+    }, opml_file.writer());
 
     try dist_dir.makeDir("colophon");
     var colophon_dir = try dist_dir.openDir("colophon", .{});
