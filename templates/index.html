@@ -1,83 +1,86 @@
 {{>header}}
-        <header class="hero">
-            <h1 class="hero__heading">
-                Fire
-                <br />
-                Chicken
-                <br />
-                Webring
-            </h1>
-            <div class="hero__fire_chicken">
-                <img
-                    src="/fire-chicken.svg"
-                    alt="A chicken with sunglasses and a tail of fire"
-                />
+<header class="hero">
+    <h1 class="hero__heading">
+        Fire
+        <br />
+        Chicken
+        <br />
+        Webring
+    </h1>
+    <div class="hero__fire_chicken">
+        <img
+            src="/fire-chicken.svg"
+            alt="A chicken with sunglasses and a tail of fire"
+        />
+    </div>
+</header>
+<div class="main stack">
+    <p class="description">An invite-only webring for personal websites.</p>
+    <div>
+        This is what it looks like:
+        <a class="no-underline" href="/{{members[0].slug}}/prev">←</a>&nbsp;<a
+            href="https://firechicken.club"
+            >Fire&nbsp;Chicken&nbsp;Webring</a
+        >&nbsp;<a class="no-underline" href="/{{first_slug}}/next">→</a>
+        or
+        <a class="no-underline" href="/{{first_slug}}/prev">←</a>&nbsp;<a
+            class="no-underline"
+            href="https://firechicken.club"
+            >🔥&#8288;🐓</a
+        >&nbsp;<a class="no-underline" href="/{{members[0].slug}}/next">→</a>
+    </div>
+    <table class="members">
+        <thead>
+            <th>Slug</th>
+            <th>Name</th>
+            <th>Url</th>
+        </thead>
+        <tbody>
+            {{#members}}
+            <tr class="{{#invalid}}line-through{{/invalid}}">
+                <td>{{slug}}</td>
+                <td>{{name}}</td>
+                <td>
+                    <a href="{{url}}">{{host}}</a>
+                </td>
+            </tr>
+            {{/members}}
+        </tbody>
+    </table>
+    <h2>FAQ</h2>
+    <section class="stack-small">
+        <details>
+            <summary>What is a webring?</summary>
+            <p>
+                A webring is a collection of website, usually grouped by a
+                topic, so people that want to find websites with similar content
+                can find those easily. They were popular in the 90s due to bad
+                search engines. Now they’re <em>niche</em>.
+            </p>
+        </details>
+        <details>
+            <summary>How do I join?</summary>
+            <div class="stack-small">
+                <p>
+                    If a friend of yours is in the webring, ask them to send me
+                    an email with your email address and your website. Once
+                    you're in, add the following snippet somewhere, replacing
+                    <code>:slug</code> with your slug:
+                </p>
+                <pre><code>&lt;a href=&quot;https://firechicken.club/:slug/prev&quot;&gt;←&lt;/a&gt;
+&lt;a href=&quot;https://firechicken.club&quot;&gt;Fire Chicken Webring&lt;/a&gt;
+&lt;a href=&quot;https://firechicken.club/:slug/next&quot;&gt;→&lt;/a&gt;</code></pre>
             </div>
-        </header>
-        <div class="main stack">
-            <p class="description">An invite-only webring for personal websites.</p>
-            <div>
-                This is what it looks like:
-                <a class="no-underline" href="/{{members[0].slug}}/prev">←</a>&nbsp;<a href="https://firechicken.club">Fire&nbsp;Chicken&nbsp;Webring</a>&nbsp;<a class="no-underline" href="/{{first_slug}}/next">→</a>
-                or
-                <a class="no-underline" href="/{{first_slug}}/prev">←</a>&nbsp;<a class="no-underline" href="https://firechicken.club">🔥&#8288;🐓</a>&nbsp;<a class="no-underline" href="/{{members[0].slug}}/next">→</a>
-            </div>
-            <table class="members">
-                <thead>
-                    <th>Slug</th>
-                    <th>Name</th>
-                    <th>Url</th>
-                </thead>
-                <tbody>
-                    {{#members}}
-                    <tr class="{{#invalid}}line-through{{/invalid}}">
-                        <td>{{slug}}</td>
-                        <td>{{name}}</td>
-                        <td>
-                            <a href="{{url}}">{{host}}</a>
-                        </td>
-                    </tr>
-                    {{/members}}
-                </tbody>
-            </table>
-            <h2>FAQ</h2>
-            <section class="stack-small">
-                <details>
-                    <summary>What is a webring?</summary>
-                    <p>
-                        A webring is a collection of website, usually grouped by a
-                        topic, so people that want to find websites with similar content
-                        can find those easily. They were popular in the 90s due to bad
-                        search engines. Now they’re <em>niche</em>.
-                    </p>
-                </details>
-                <details>
-                    <summary>How do I join?</summary>
-                    <div class="stack-small">
-                        <p>
-                            If a friend of yours is in the webring, ask them to send me
-                            an email with your email address and your website. Once
-                            you're in, add the following snippet somewhere, replacing
-                            <code>:slug</code> with your slug:
-                        </p>
-                        <pre>
-                            <code>
-<a href="https://firechicken.club/:slug/prev">←</a>
-<a href="https://firechicken.club">Fire Chicken Webring</a>
-<a href="https://firechicken.club/:slug/next">→</a>
-                            </code>
-                        </pre>
-                    </div>
-                </details>
-                <details>
-                    <summary>Why are some members crossed out?</summary>
-                    <p>
-                        When the links are missing or the site is down for a longer
-                        period of time, the member is marked as invalid and skipped in
-                        the ring. If you're a member and you think you're marked as
-                        invalid by mistake, please contact me.
-                    </p>
-                </details>
-            </section>
-        </div>
+        </details>
+        <details>
+            <summary>Why are some members crossed out?</summary>
+            <p>
+                When the links are missing or the site is down for a longer
+                period of time, the member is marked as invalid and skipped in
+                the ring. If you're a member and you think you're marked as
+                invalid by mistake, please contact me.
+            </p>
+        </details>
+    </section>
+</div>
 {{>footer}}
