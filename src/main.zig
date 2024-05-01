@@ -71,26 +71,6 @@ pub fn main() !void {
     defer not_found_file.close();
     try templates.write_not_found(not_found_file.writer());
 
-    // collect all rss feeds into one arraylist, the templating engine panics
-    // if you do nested loops
-    // plus we need to fill in title/html_url if null
-    var rss_feed_list = ArrayList(RssFeed).init(allocator);
-    defer rss_feed_list.deinit();
-    for (members.members) |member| {
-        for (member.rss_feeds) |rss_feed| {
-            var rss_feed_copy = rss_feed;
-            if (rss_feed_copy.title == null) {
-                rss_feed_copy.title = member.name;
-            }
-            if (rss_feed_copy.html_url == null) {
-                rss_feed_copy.html_url = member.url;
-            }
-            try rss_feed_list.append(rss_feed_copy);
-        }
-    }
-    const rss_feeds = try rss_feed_list.toOwnedSlice();
-    defer allocator.free(rss_feeds);
-
     var opml_file = try dist_dir.createFile("opml.xml", .{});
     defer opml_file.close();
     try templates.write_opml(opml_file.writer());
