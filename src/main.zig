@@ -34,7 +34,7 @@ pub fn main() !void {
     Blake3.hash(css, css_blake3_hash[0..], .{});
     const css_hash = std.fmt.bytesToHex(&css_blake3_hash, .lower)[0..16];
 
-    // get git sha
+    // Get git sha
     const git_sha_result = try Child.run(.{
         .allocator = allocator,
         .argv = &[_][]const u8{ "git", "rev-parse", "HEAD" },
@@ -46,6 +46,7 @@ pub fn main() !void {
     }
     const git_sha = git_sha_result.stdout;
 
+    // Get current date as ISO 882
     const date_created = try datetimeHttp(allocator);
     defer allocator.free(date_created);
 
@@ -218,8 +219,8 @@ test "invalid members are skipped in redirects" {
     , actual);
 }
 
-// The caller owns the returned memory.
-// Returns the current datetime (approx.) in the RFC_882 format.
+/// The caller owns the returned memory.
+/// Returns the current datetime (approx.) in the RFC 882 format.
 fn datetimeHttp(allocator: Allocator) ![]const u8 {
     const now = time.timestamp();
     const begin_millenial = 946684800; // 2000-01-01T00:00:00Z
