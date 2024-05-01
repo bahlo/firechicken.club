@@ -14,12 +14,7 @@
     // `zig build --fetch` can be used to fetch all dependencies of a package, recursively.
     // Once all dependencies are fetched, `zig build` no longer requires
     // internet connectivity.
-    .dependencies = .{
-        .mustache = .{
-            .url = "https://github.com/batiati/mustache-zig/archive/11cc9e1a32c0968f3aad3c343650466ad06b2c2b.tar.gz",
-            .hash = "12205538be57d7c0b92806e87c500c50bfcecb9b083adea8b2fdbec99f46598c922d",
-        },
-    },
+    .dependencies = .{},
     .paths = .{
         // This makes *all* files, recursively, included in this package. It is generally
         // better to explicitly list the files and directories instead, to insure that

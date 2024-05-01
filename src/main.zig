@@ -9,6 +9,7 @@ const Allocator = std.mem.Allocator;
 
 const mustache = @import("mustache");
 
+const Templates = @import("templates.zig").Templates;
 const members = @import("members.zig");
 const Member = members.Member;
 const RssFeed = members.RssFeed;
@@ -20,21 +21,6 @@ pub fn main() !void {
         _ = gpa.deinit();
     }
     const allocator = gpa.allocator();
-
-    const Meta = struct {
-        css_hash: []const u8,
-        git_sha: []const u8,
-        git_sha_short: []const u8,
-    };
-
-    const Context = struct {
-        title: []const u8,
-        description: []const u8,
-        url: []const u8,
-        meta: Meta,
-        members: []const Member,
-        first_member: Member,
-    };
 
     const cwd = try fs.cwd().realpathAlloc(allocator, ".");
     defer allocator.free(cwd);
@@ -60,22 +46,16 @@ pub fn main() !void {
     }
     const git_sha = git_sha_result.stdout;
 
-    const meta = Meta{
+    const date_created = try datetimeHttp(allocator);
+    defer allocator.free(date_created);
+
+    const templates = Templates{
         .css_hash = css_hash[0..],
         .git_sha = git_sha,
-        .git_sha_short = git_sha[0..7],
+        .date_created = date_created,
     };
 
     // Render templates
-
-    const header_template = try parseTemplate(allocator, cwd, "header.html");
-    defer header_template.deinit(allocator);
-    const footer_template = try parseTemplate(allocator, cwd, "footer.html");
-    defer footer_template.deinit(allocator);
-    const partials = .{
-        .{ "header", header_template },
-        .{ "footer", footer_template },
-    };
 
     fs.cwd().deleteTree("dist") catch unreachable;
     try fs.cwd().makeDir("dist");
@@ -83,31 +63,13 @@ pub fn main() !void {
     var dist_dir = try fs.cwd().openDir("dist", .{ .iterate = true }); // iteration is necessary for the copyDirRecursive call later
     defer dist_dir.close();
 
-    const index_template = try parseTemplate(allocator, cwd, "index.html");
-    defer index_template.deinit(allocator);
     var index_file = try dist_dir.createFile("index.html", .{});
     defer index_file.close();
-    try mustache.renderPartials(index_template, partials, Context{
-        .title = "Fire Chicken Webring",
-        .description = "An invite-only webring for personal websites.",
-        .url = "https://firechicken.club",
-        .members = &members.members,
-        .first_member = members.members[0],
-        .meta = meta,
-    }, index_file.writer());
+    try templates.write_index(index_file.writer());
 
-    const not_found_template = try parseTemplate(allocator, cwd, "404.html");
-    defer not_found_template.deinit(allocator);
     var not_found_file = try dist_dir.createFile("404.html", .{});
     defer not_found_file.close();
-    try mustache.renderPartials(not_found_template, partials, Context{
-        .title = "Not Found — Fire Chicken Webring",
-        .description = "This page could not be found.",
-        .url = "https://firechicken.club/404",
-        .members = &members.members,
-        .first_member = members.members[0],
-        .meta = meta,
-    }, not_found_file.writer());
+    try templates.write_not_found(not_found_file.writer());
 
     // collect all rss feeds into one arraylist, the templating engine panics
     // if you do nested loops
@@ -129,34 +91,16 @@ pub fn main() !void {
     const rss_feeds = try rss_feed_list.toOwnedSlice();
     defer allocator.free(rss_feeds);
 
-    const date_created = try datetimeHttp(allocator);
-    defer allocator.free(date_created);
-
-    const opml_template = try parseTemplate(allocator, cwd, "opml.xml");
-    defer opml_template.deinit(allocator);
     var opml_file = try dist_dir.createFile("opml.xml", .{});
     defer opml_file.close();
-    try mustache.render(opml_template, .{
-        .title = "RSS Feeds for all Fire Chicken Webring members",
-        .date_created = date_created,
-        .rss_feeds = rss_feeds,
-    }, opml_file.writer());
+    try templates.write_opml(opml_file.writer());
 
-    const colophon_template = try parseTemplate(allocator, cwd, "colophon.html");
-    defer colophon_template.deinit(allocator);
     try dist_dir.makeDir("colophon");
     var colophon_dir = try dist_dir.openDir("colophon", .{});
     defer colophon_dir.close();
     var colophon_file = try colophon_dir.createFile("index.html", .{});
     defer colophon_file.close();
-    try mustache.renderPartials(colophon_template, partials, Context{
-        .title = "Colophon — Fire Chicken Webring",
-        .description = "The colophon for the Fire Chicken Webring.",
-        .url = "https://firechicken.club/colophon",
-        .members = &members.members,
-        .first_member = members.members[0],
-        .meta = meta,
-    }, colophon_file.writer());
+    try templates.write_colophon(colophon_file.writer());
 
     // Render _redirects
 
