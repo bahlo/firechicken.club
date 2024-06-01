@@ -7,8 +7,6 @@ const ArrayList = std.ArrayList;
 const Blake3 = std.crypto.hash.Blake3;
 const Allocator = std.mem.Allocator;
 
-const mustache = @import("mustache");
-
 const Templates = @import("templates.zig").Templates;
 const members = @import("members.zig");
 const Member = members.Member;
@@ -130,19 +128,6 @@ fn copyDirRecursive(src_dir: fs.Dir, dest_dir: fs.Dir) !void {
             else => @panic("non-file/directory entry in static directory"),
         }
     }
-}
-
-fn parseTemplate(allocator: Allocator, cwd: []const u8, filename: []const u8) !mustache.Template {
-    const path = try fs.path.join(allocator, &.{ cwd, "templates", filename });
-    defer allocator.free(path);
-
-    const res = try mustache.parseFile(allocator, path, .{}, .{});
-    return switch (res) {
-        .parse_error => |parse_error| return parse_error.parse_error,
-        .success => |template| blk: {
-            break :blk template;
-        },
-    };
 }
 
 fn renderRedirects(writer: anytype, member_list: []const Member) !void {
