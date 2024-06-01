@@ -1,0 +1,197 @@
+[
+  {
+    "slug": "arne",
+    "name": "Arne Bahlo",
+    "url": "https://arne.me",
+    "host": "arne.me",
+    "joined": "2023-11-12",
+    "invalid": false,
+    "rss_feeds": [
+      {
+        "title": "Arne Bahlo",
+        "xml_url": "https://arne.me/articles/atom.xml",
+        "html_url": "https://arne.me/articles"
+      },
+      {
+        "title": "Arne’s Weekly",
+        "xml_url": "https://arne.me/weekly/atom.xml",
+        "html_url": "https://arne.me/weekly"
+      },
+      {
+        "title": "Arne Bahlo’s Book Reviews",
+        "xml_url": "https://arne.me/book-reviews/feed.xml",
+        "html_url": "https://arne.me/book-reviews"
+      }
+    ]
+  },
+  {
+    "slug": "ollie",
+    "name": "ollie",
+    "url": "https://flbn.sh",
+    "host": "flbn.sh",
+    "joined": "2023-11-13",
+    "invalid": true,
+    "rss_feeds": []
+  },
+  {
+    "slug": "lukas",
+    "name": "Lukas Malkmus",
+    "url": "https://lukasmalkmus.com",
+    "host": "lukasmalkmus.com",
+    "joined": "2023-11-13",
+    "invalid": false,
+    "rss_feeds": []
+  },
+  {
+    "slug": "pwa",
+    "name": "Philipp Waldhauer",
+    "url": "https://knuspermagier.de",
+    "host": "knuspermagier.de",
+    "joined": "2023-11-13",
+    "invalid": false,
+    "rss_feeds": [
+      {
+        "title": null,
+        "html_url": null,
+        "xml_url": "https://knuspermagier.de/feed"
+      }
+    ]
+  },
+  {
+    "slug": "kotatsuyaki",
+    "name": "kotatsuyaki",
+    "url": "https://blog.kotatsu.dev",
+    "host": "blog.kotatsu.dev",
+    "joined": "2023-11-15",
+    "invalid": false,
+    "rss_feeds": [
+      {
+        "title": null,
+        "html_url": null,
+        "xml_url": "https://blog.kotatsu.dev/feed.xml"
+      },
+      {
+        "title": "kotatsuyaki’s notes",
+        "xml_url": "https://blog.kotatsu.dev/notes.xml",
+        "html_url": "https://blog.kotatsu.dev/notes"
+      }
+    ]
+  },
+  {
+    "slug": "cv",
+    "name": "Christoph Voigt",
+    "url": "https://christophvoigt.com",
+    "host": "christophvoigt.com",
+    "joined": "2023-11-15",
+    "invalid": false,
+    "rss_feeds": [
+      {
+        "title": null,
+        "html_url": null,
+        "xml_url": "https://christophvoigt.com/rss.xml"
+      }
+    ]
+  },
+  {
+    "slug": "igor",
+    "name": "Igor Bedesqui",
+    "url": "https://igorbedesqui.com",
+    "host": "igorbedesqui.com",
+    "joined": "2023-11-20",
+    "invalid": false,
+    "rss_feeds": []
+  },
+  {
+    "slug": "hexedit",
+    "name": "HexEdit Reality",
+    "url": "https://hexeditreality.com/",
+    "host": "hexeditreality.com",
+    "joined": "2023-11-24",
+    "invalid": false,
+    "rss_feeds": [
+      {
+        "title": null,
+        "html_url": null,
+        "xml_url": "https://hexeditreality.com/index.xml"
+      }
+    ]
+  },
+  {
+    "slug": "stefan",
+    "name": "Stefan Kühnel",
+    "url": "https://stefankuehnel.com",
+    "host": "stefankuehnel.com",
+    "joined": "2023-11-27",
+    "invalid": false,
+    "rss_feeds": []
+  },
+  {
+    "slug": "foreverliketh.is",
+    "name": "Jayden Garridan Bridges",
+    "url": "https://foreverliketh.is",
+    "host": "foreverliketh.is",
+    "joined": "2024-01-03",
+    "invalid": false,
+    "rss_feeds": [
+      {
+        "title": null,
+        "html_url": null,
+        "xml_url": "https://foreverliketh.is/blog/index.xml"
+      }
+    ]
+  },
+  {
+    "slug": "efe",
+    "name": "İsmail Efe",
+    "url": "https://ismailefe.org",
+    "host": "ismailefe.org",
+    "joined": "2024-02-21",
+    "invalid": false,
+    "rss_feeds": [
+      {
+        "title": null,
+        "html_url": null,
+        "xml_url": "https://ismailefe.org/feed.xml"
+      }
+    ]
+  },
+  {
+    "slug": "jan",
+    "name": "Jan Früchtl",
+    "url": "https://jan.work",
+    "host": "jan.work",
+    "joined": "2024-05-01",
+    "invalid": false,
+    "rss_feeds": [
+      {
+        "title": null,
+        "html_url": null,
+        "xml_url": "https://jan.work/feed"
+      }
+    ]
+  },
+  {
+    "slug": "laplab",
+    "name": "Nikita Lapkov",
+    "url": "https://laplab.me",
+    "host": "laplab.me",
+    "joined": "2024-05-03",
+    "invalid": false,
+    "rss_feeds": [
+      {
+        "title": null,
+        "html_url": null,
+        "xml_url": "https://laplab.me/posts/index.xml"
+      }
+    ]
+  },
+  {
+    "slug": "bfc",
+    "name": "rmf",
+    "url": "https://baccyflap.com/rsp",
+    "host": "baccyflap.com",
+    "joined": "2024-06-01",
+    "invalid": false,
+    "rss_feeds": []
+  }
+]

@@ -58,6 +58,9 @@ pub fn main() !void {
 
     // Render templates
 
+    const parsed_members = try members.parse(allocator);
+    defer parsed_members.deinit();
+
     fs.cwd().deleteTree("dist") catch unreachable;
     try fs.cwd().makeDir("dist");
 
@@ -66,7 +69,7 @@ pub fn main() !void {
 
     var index_file = try dist_dir.createFile("index.html", .{});
     defer index_file.close();
-    try templates.write_index(index_file.writer());
+    try templates.write_index(index_file.writer(), parsed_members.value);
 
     var not_found_file = try dist_dir.createFile("404.html", .{});
     defer not_found_file.close();
@@ -74,7 +77,7 @@ pub fn main() !void {
 
     var opml_file = try dist_dir.createFile("opml.xml", .{});
     defer opml_file.close();
-    try templates.write_opml(opml_file.writer());
+    try templates.write_opml(opml_file.writer(), parsed_members.value);
 
     try dist_dir.makeDir("colophon");
     var colophon_dir = try dist_dir.openDir("colophon", .{});
@@ -87,7 +90,7 @@ pub fn main() !void {
 
     var redirects_file = try dist_dir.createFile("_redirects", .{});
     defer redirects_file.close();
-    try renderRedirects(redirects_file.writer(), &members.members);
+    try renderRedirects(redirects_file.writer(), parsed_members.value);
 
     // Copy assets
 

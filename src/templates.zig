@@ -1,4 +1,4 @@
-const members = @import("members.zig").members;
+const Member = @import("members.zig").Member;
 
 pub const Templates = struct {
     git_sha: []const u8,
@@ -53,7 +53,7 @@ pub const Templates = struct {
         , .{ self.git_sha, self.git_sha[0..7] });
     }
 
-    pub fn write_index(self: Templates, writer: anytype) !void {
+    pub fn write_index(self: Templates, writer: anytype, members: []const Member) !void {
         try self.write_header(writer, "Fire Chicken Webring", "An invite-only webring for personal websites.", "https://firechicken.club");
         const first_slug = members[0].slug;
         try writer.print(
@@ -171,7 +171,7 @@ pub const Templates = struct {
         try self.write_footer(writer);
     }
 
-    pub fn write_opml(self: Templates, writer: anytype) !void {
+    pub fn write_opml(self: Templates, writer: anytype, members: []const Member) !void {
         try writer.print(
             \\<opml version="1.0">
             \\    <head>
