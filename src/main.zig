@@ -237,7 +237,7 @@ fn datetimeHttp(allocator: Allocator) ![]const u8 {
         "Sat",
         "Sun",
     };
-    const weekday_name = weekdays[@intCast(@mod(day, 7) - 2)]; // - 2 because 2000-01-01 is a wed
+    const weekday_name = weekdays[@intCast(@mod(@mod(day, 7) - 2, 7))]; // - 2 because 2000-01-01 is a wed
     var year: u16 = 2000;
     var is_leap_year = false;
     while (year < 3000) {
