@@ -158,15 +158,15 @@
   {
     "slug": "jan",
     "name": "Jan Früchtl",
-    "url": "https://jan.work",
-    "host": "jan.work",
+    "url": "https://coolcut.lol",
+    "host": "coolcut.lol",
     "joined": "2024-05-01",
     "invalid": false,
     "rss_feeds": [
       {
         "title": null,
         "html_url": null,
-        "xml_url": "https://jan.work/feed"
+        "xml_url": "https://coolcut.lol/rss"
       }
     ]
   },

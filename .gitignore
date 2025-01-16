@@ -2,3 +2,4 @@
 /zig-out
 /dist
 /static/fonts/obviously-condensed
+/.zig-cache
